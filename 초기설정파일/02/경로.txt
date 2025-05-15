@@ -1,0 +1,2 @@
+\middle_team_project\.metadata\.sts\content\org.springframework.templates.mvc-3.2.2
+폴더안에
