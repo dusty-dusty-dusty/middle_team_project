@@ -18,7 +18,7 @@
 	
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 	  <property name="dataSource" ref="dataSource" />
-	  <property name="mapperLocations" value="classpath:com/mid/mappers/**/*Mapper.xml"></property>
+	  <property name="mapperLocations" value="classpath:com/mid/mappers/**/BoardMapper.xml"></property><!-- Boardmapper로 변경 -->
 	</bean>
 	 
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
