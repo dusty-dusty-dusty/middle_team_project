@@ -1,0 +1,698 @@
+/**
+ * mypage.css
+ * 마이페이지 관련 모든 스타일을 정의하는 CSS 파일
+ * 사이드바, 프로필 수정, 장바구니 등의 스타일이 포함되어 있음
+ */
+
+/* 기본 페이지 레이아웃 설정 */
+body {
+    margin: 0;                    /* 기본 마진 제거 */
+    padding-top: 60px;           /* 헤더 높이만큼 상단 패딩 */
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;   /* 페이지 배경색 */
+}
+
+/* 전체 컨테이너 설정 */
+.container {
+    display: flex;               /* 플렉스박스 레이아웃 사용 */
+    max-width: 1500px;          /* 최대 너비 설정 */
+    margin: 0 auto;             /* 가운데 정렬 */
+    padding: 20px;              /* 전체 여백 */
+    position: relative;         /* 자식 요소의 기준점 */
+}
+
+/* 메인 컨텐츠 영역 스타일 */
+.main-content {
+    flex: 1;
+    margin-left: 200px;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 40px 60px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* 사이드바 스타일 설정 */
+.sidebar {
+    width: 200px;
+    margin-right: 40px;
+    padding: 20px;
+    background-color: #e8eaed;
+    border-radius: 8px;
+    position: fixed;
+    top: 160px;
+    left: 50%;
+    transform: translateX(-800px);
+    height: auto;
+    min-height: 300px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    z-index: 100;
+    scrollbar-width: thin;
+    scrollbar-color: #00a8e8 #f1f1f1;
+}
+
+/* 사이드바 스크롤바 스타일 */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #00a8e8;
+    border-radius: 3px;
+}
+
+/* 사이드바 제목 스타일 */
+.sidebar-title {
+    font-size: 20px;           /* 글자 크기 */
+    font-weight: bold;         /* 글자 굵기 */
+    color: #333;               /* 글자 색상 */
+    margin: 0 0 25px 0;        /* 여백 */
+    padding-left: 15px;        /* 왼쪽 패딩 */
+    border-left: 4px solid #00a8e8; /* 왼쪽 강조선 */
+}
+
+/* 사이드바 메뉴 목록 */
+.sidebar-menu {
+    list-style: none;          /* 리스트 스타일 제거 */
+    padding: 0;
+    margin: 0;
+}
+
+/* 사이드바 메뉴 항목 */
+.sidebar-menu li {
+    margin-bottom: 8px;        /* 항목 간 간격 */
+    transition: all 0.2s ease; /* 효과 전환 시간 */
+}
+
+/* 사이드바 메뉴 링크 */
+.sidebar-menu a {
+    display: block;
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    padding: 12px 15px;
+    transition: all 0.2s ease;
+    position: relative;
+    line-height: 1.4;
+    border-radius: 6px;
+}
+
+/* 사이드바 메뉴 호버 효과 */
+.sidebar-menu a:hover {
+    color: #333;
+    background-color: #dfe2e6;
+    padding-left: 20px;        /* 호버시 들여쓰기 효과 */
+}
+
+/* 현재 선택된 메뉴 스타일 */
+.sidebar-menu a.active {
+    color: #00a8e8;
+    font-weight: 600;
+    background-color: #dce9f0;
+}
+
+/* 선택된 메뉴 왼쪽 도트 표시 */
+.sidebar-menu a.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: #00a8e8;
+    border-radius: 50%;
+}
+
+/* Page title */
+.page-title {
+    font-size: 24px;
+    color: #333;
+    margin: 0 0 30px 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* Orders page styles */
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.order-table th, .order-table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-table th {
+    background-color: #f8f9fa;
+    font-weight: 500;
+    color: #333;
+}
+
+.order-table td {
+    color: #666;
+}
+
+/* 주문 상태 스타일 */
+.status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.status.배송완료 {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status.배송중 {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.status.배송준비중 {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 0 4px;
+    border: 1px solid #ddd;
+    text-decoration: none;
+    color: #333;
+    border-radius: 4px;
+}
+
+.pagination a.active {
+    background-color: #00a8e8;
+    color: white;
+    border-color: #00a8e8;
+}
+
+.pagination a:hover:not(.active) {
+    background-color: #f8f9fa;
+}
+
+/* Basket page styles */
+.basket-header, .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.select-all {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-primary {
+    width: auto;
+    min-width: 200px;
+    max-width: 300px;
+    padding: 12px 30px;
+    background-color: #00a8e8;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+    margin: 20px auto 0;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0096d1;
+}
+
+.btn-secondary {
+    padding: 8px 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.basket-list .basket-item {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: #fff;
+}
+
+.item-checkbox {
+    margin-right: 20px;
+}
+
+.product-info {
+    display: flex;
+    flex: 1;
+    gap: 20px;
+}
+
+.product-thumb {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.product-details {
+    flex: 1;
+}
+
+.price {
+    margin: 5px 0;
+    color: #333;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.quantity-control button {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+}
+
+.quantity-input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 5px;
+}
+
+.basket-summary {
+    margin-top: 30px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 600px;
+    margin: 30px auto;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 0 20px;
+}
+
+.summary-item.total {
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+    font-weight: bold;
+}
+
+/* Profile page styles */
+.edit-profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.edit-profile-form {
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    position: relative;
+    padding: 0 30px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+/* 필수 입력 표시 */
+.required {
+    color: #e74c3c;
+    margin-left: 4px;
+}
+
+/* 입력 필드 힌트 텍스트 */
+.form-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    color: #333;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #00a8e8;
+    box-shadow: 0 0 0 2px rgba(0, 168, 232, 0.1);
+    outline: none;
+}
+
+.form-control {
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+.form-control:read-only {
+    background-color: #e9ecef;
+    cursor: default;
+}
+
+/* 입력 필드 플레이스홀더 */
+.form-group input::placeholder {
+    color: #adb5bd;
+    font-size: 14px;
+}
+
+/* 에러 상태 */
+.form-group input.error {
+    border-color: #e74c3c;
+}
+
+.form-group input.error:focus {
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.1);
+}
+
+/* 성공 상태 */
+.form-group input.success {
+    border-color: #2ecc71;
+}
+
+.form-group input.success:focus {
+    box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.1);
+}
+
+/* 비활성화 상태 */
+.form-group input:disabled,
+.form-control:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* 아이디 입력필드와 중복확인 버튼을 감싸는 컨테이너 */
+.input-with-button {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    position: relative;
+}
+
+/* 아이디 입력 필드 스타일 */
+.input-with-button input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+    box-sizing: border-box;
+    color: #333;
+}
+
+/* 중복확인 버튼 스타일 */
+.check-button {
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 1px solid #00a8e8;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #00a8e8;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    min-width: 100px;
+    position: absolute;
+    left: -110px;
+    top: 3px;
+}
+
+/* 중복확인 버튼 호버(마우스 오버) 효과 */
+.check-button:hover {
+    background-color: #00a8e8;
+    color: #fff;
+}
+
+.button-group {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    padding: 0 30px;
+}
+
+.save-button {
+    flex: 1;
+    padding: 15px;
+    background-color: #00a8e8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.save-button:hover {
+    background-color: #0096d1;
+}
+
+.cancel-button {
+    flex: 1;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.cancel-button:hover {
+    background-color: #f8f9fa;
+    border-color: #c8c8c8;
+}
+
+/* Error state for inputs */
+.form-group input.error {
+    border-color: #dc3545;
+}
+
+.form-group input.error:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* Success state for inputs */
+.form-group input.success {
+    border-color: #28a745;
+}
+
+.form-group input.success:focus {
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+/* Disabled state */
+.form-group input:disabled,
+.form-control:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* 알림 메시지 컨테이너 */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+/* 알림 메시지 스타일 */
+.notification {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px 24px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    max-width: 450px;
+    animation: slideIn 0.3s ease-out;
+    border-left: 4px solid;
+}
+
+/* 성공 메시지 스타일 */
+.notification.success {
+    border-left-color: #28a745;
+}
+
+.notification.success .icon {
+    color: #28a745;
+}
+
+/* 경고 메시지 스타일 */
+.notification.warning {
+    border-left-color: #ffc107;
+}
+
+.notification.warning .icon {
+    color: #ffc107;
+}
+
+/* 에러 메시지 스타일 */
+.notification.error {
+    border-left-color: #dc3545;
+}
+
+.notification.error .icon {
+    color: #dc3545;
+}
+
+/* 알림 메시지 내용 */
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.notification-message {
+    font-size: 13px;
+    color: #666;
+}
+
+/* 알림 닫기 버튼 */
+.notification-close {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.notification-close:hover {
+    color: #666;
+}
+
+/* 슬라이드 인 애니메이션 */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* 슬라이드 아웃 애니메이션 */
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.notification.hide {
+    animation: slideOut 0.3s ease-out forwards;
+}
+
+/* SweetAlert2 커스텀 스타일 */
+.swal2-popup {
+    font-family: Arial, sans-serif;
+    border-radius: 12px;
+    padding: 2em;
+}
+
+.swal2-title {
+    color: #333;
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-bottom: 0.5em;
+}
+
+.swal2-content {
+    color: #666;
+    font-size: 1.1em;
+}
+
+.swal2-confirm {
+    background-color: #00a8e8 !important;
+    border-radius: 6px !important;
+    padding: 12px 24px !important;
+    font-size: 1em !important;
+}
+
+.swal2-cancel {
+    background-color: #f8f9fa !important;
+    color: #333 !important;
+    border: 1px solid #ddd !important;
+    border-radius: 6px !important;
+    padding: 12px 24px !important;
+    font-size: 1em !important;
+} 

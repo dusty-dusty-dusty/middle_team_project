@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+  "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mid.mypage.mapper.CartMapper">
+
+  <!-- 회원의 장바구니 목록을 조회 -->
+  <select id="getCartList" parameterType="String" resultType="com.mid.mypage.model.CartVO">
+    SELECT 
+      c.cart_id AS cartId,
+      c.mem_no AS memNo,
+      c.product_no AS productNo,
+      c.cart_quantitiy AS cartQuantity,
+      p.product_name AS productName,
+      p.product_price AS productPrice,
+      COALESCE(p.product_thum, p.product_image) AS productThum
+    FROM CART c
+    JOIN PRODUCT p ON c.product_no = p.product_no
+    WHERE c.mem_no = #{memNo}
+  </select>
+
+  <!-- 회원ID로 장바구니 목록을 조회 -->
+  <select id="getCartListByMemberId" parameterType="String" resultType="com.mid.mypage.model.CartVO">
+    SELECT 
+      c.cart_id AS cartId,
+      c.mem_no AS memNo,
+      c.product_no AS productNo,
+      c.cart_quantitiy AS cartQuantity,
+      p.product_name AS productName,
+      p.product_price AS productPrice,
+      COALESCE(p.product_thum, p.product_image) AS productThum
+    FROM CART c
+    JOIN PRODUCT p ON c.product_no = p.product_no
+    JOIN MEMBER m ON c.mem_no = m.mem_no
+    WHERE m.mem_id = #{memId}
+  </select>
+
+  <!-- 페이징된 장바구니 목록을 조회 -->
+  <select id="getCartListPaged" parameterType="map" resultType="com.mid.mypage.model.CartVO">
+    SELECT * FROM (
+      SELECT a.*, ROWNUM AS rnum FROM (
+        SELECT 
+          c.cart_id AS cartId,
+          c.mem_no AS memNo,
+          c.product_no AS productNo,
+          c.cart_quantitiy AS cartQuantity,
+          p.product_name AS productName,
+          p.product_price AS productPrice,
+          COALESCE(p.product_thum, p.product_image) AS productThum
+        FROM CART c
+        JOIN PRODUCT p ON c.product_no = p.product_no
+        WHERE c.mem_no = #{memNo}
+        ORDER BY p.product_no
+      ) a WHERE ROWNUM &lt;= #{end}
+    ) WHERE rnum &gt; #{start}
+  </select>
+
+  <!-- 장바구니 항목 수를 조회 -->
+  <select id="getCartCount" parameterType="String" resultType="int">
+    SELECT COUNT(*) FROM CART WHERE mem_no = #{memNo}
+  </select>
+
+  <!-- 장바구니에 상품을 추가 -->
+  <insert id="insertCart" parameterType="com.mid.mypage.model.CartVO">
+    INSERT INTO CART (cart_id, mem_no, product_no, cart_quantitiy)
+    VALUES (#{cartId}, #{memNo}, #{productNo}, #{cartQuantity})
+  </insert>
+
+  <!-- 장바구니에서 상품을 삭제 -->
+  <delete id="deleteCart" parameterType="map">
+    DELETE FROM CART WHERE mem_no = #{memNo} AND product_no = #{productNo}
+  </delete>
+
+  <!-- 상품번호로 장바구니 항목을 삭제 -->
+  <delete id="deleteCartByProductNo" parameterType="map">
+    DELETE FROM CART WHERE mem_no = #{memNo} AND product_no = #{productNo}
+  </delete>
+
+  <!-- 장바구니 상품의 수량을 업데이트 -->
+  <update id="updateCartQuantity" parameterType="map">
+    UPDATE CART 
+    SET cart_quantitiy = #{cartQuantity} 
+    WHERE mem_no = #{memNo} AND product_no = #{productNo}
+  </update>
+
+  <!-- 상품별 장바구니 수량을 업데이트 -->
+  <update id="updateCartQuantityByProduct" parameterType="map">
+    UPDATE CART 
+    SET cart_quantitiy = #{cartQuantity} 
+    WHERE mem_no = #{memNo} AND product_no = #{productNo}
+  </update>
+
+  <!-- 장바구니 ID로 항목을 삭제 -->
+  <delete id="deleteCartById" parameterType="String">
+    DELETE FROM CART WHERE cart_id = #{cartId}
+  </delete>
+
+  <!-- 장바구니 ID로 항목을 조회 -->
+  <select id="getCartById" parameterType="String" resultType="com.mid.mypage.model.CartVO">
+    SELECT 
+      c.cart_id AS cartId,
+      c.mem_no AS memNo,
+      c.product_no AS productNo,
+      c.cart_quantitiy AS cartQuantity,
+      p.product_name AS productName,
+      p.product_price AS productPrice,
+      COALESCE(p.product_thum, p.product_image) AS productThum
+    FROM CART c
+    JOIN PRODUCT p ON c.product_no = p.product_no
+    WHERE c.cart_id = #{cartId}
+  </select>
+
+</mapper>
