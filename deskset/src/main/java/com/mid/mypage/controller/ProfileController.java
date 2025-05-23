@@ -1,12 +1,10 @@
 package com.mid.mypage.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.mid.mypage.service.MypageService;
 import com.mid.mypage.model.MemberVO;
 
 import javax.servlet.http.HttpSession;
@@ -14,66 +12,62 @@ import javax.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/mypage/profile")
 public class ProfileController {
-    
-    @Autowired
-    private MypageService mypageService;
-    
+
     @GetMapping("")
     public String viewProfile(HttpSession session, Model model) {
+        // 세션에서 memId 가져오기 (더미)
         String memId = (String) session.getAttribute("memId");
-        MemberVO member = mypageService.getMemberInfo(memId);
+        
+        // 더미 MemberVO 생성
+        MemberVO member = new MemberVO();
+        member.setMemId(memId != null ? memId : "dummyUser");
+        member.setMemName("홍길동");
+        member.setMemEmail("hong@example.com");
+        member.setMemPwd("password123");
+        
         model.addAttribute("member", member);
         return "mypage/profile";
     }
-    
+
     @GetMapping("/edit")
     public String editProfileForm(HttpSession session, Model model) {
+        // 세션에서 memId 가져오기 (더미)
         String memId = (String) session.getAttribute("memId");
-        MemberVO member = mypageService.getMemberInfo(memId);
+        
+        // 더미 MemberVO 생성
+        MemberVO member = new MemberVO();
+        member.setMemId(memId != null ? memId : "dummyUser");
+        member.setMemName("홍길동");
+        member.setMemEmail("hong@example.com");
+        member.setMemPwd("password123");
+        
         model.addAttribute("member", member);
         return "mypage/edit-profile";
     }
-    
+
     @PostMapping("/edit")
-    public String updateProfile(@ModelAttribute MemberVO member, 
-                              HttpSession session, 
-                              RedirectAttributes rttr) {
-        try {
-            boolean result = mypageService.updateMemberInfo(member);
-            if (result) {
-                rttr.addFlashAttribute("message", "프로필이 성공적으로 수정되었습니다.");
-            } else {
-                rttr.addFlashAttribute("error", "프로필 수정에 실패했습니다.");
-            }
-        } catch (Exception e) {
-            rttr.addFlashAttribute("error", "프로필 수정 중 오류가 발생했습니다.");
-        }
+    public String updateProfile(@ModelAttribute MemberVO member,
+                                HttpSession session,
+                                RedirectAttributes rttr) {
+        // DB 업데이트 로직 제거 → 무조건 성공 메시지
+        rttr.addFlashAttribute("message", "프로필이 성공적으로 수정되었습니다. (더미)");
         return "redirect:/mypage/profile";
     }
-    
+
     @PostMapping("/password")
     @ResponseBody
     public String changePassword(@RequestParam String currentPassword,
-                               @RequestParam String newPassword,
-                               HttpSession session) {
-        try {
-            String memId = (String) session.getAttribute("memId");
-            MemberVO member = mypageService.getMemberInfo(memId);
-            
-            if (!member.getMemPwd().equals(currentPassword)) {
-                return "현재 비밀번호가 일치하지 않습니다.";
-            }
-            
-            member.setMemPwd(newPassword);
-            boolean result = mypageService.updateMemberInfo(member);
-            
-            if (result) {
-                return "success";
-            } else {
-                return "비밀번호 변경에 실패했습니다.";
-            }
-        } catch (Exception e) {
-            return "비밀번호 변경 중 오류가 발생했습니다.";
+                                 @RequestParam String newPassword,
+                                 HttpSession session) {
+        // 더미 기존 비밀번호 (실제로는 세션·서비스에서 가져와야 함)
+        String existingPwd = "password123";
+
+        // 현재 비밀번호 검증
+        if (!existingPwd.equals(currentPassword)) {
+            return "현재 비밀번호가 일치하지 않습니다.";
         }
+
+        // 비밀번호 변경 로직 제거 → 무조건 성공
+        return "success";
     }
-} 
+}
