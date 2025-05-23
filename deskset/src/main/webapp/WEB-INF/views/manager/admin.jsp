@@ -10,11 +10,20 @@
 <!----------------------- JQuery ----------------------------->
 <script src="https://code.jquery.com/jquery-3.6.0.js" type="text/javascript"></script>
 <script src='/deskset/resources/js/manager/admin.js' type="text/javascript"></script>
+<script src='/deskset/resources/js/manager/admin_adm.js' type="text/javascript"></script>
+<script src='/deskset/resources/js/manager/member_adm.js' type="text/javascript"></script>
+<script src='/deskset/resources/js/manager/product_adm.js' type="text/javascript"></script>
+<script src='/deskset/resources/js/manager/product_register.js' type="text/javascript"></script>
 <!----------------------- tailwindcss ----------------------------->
 <script src="https://cdn.tailwindcss.com/3.4.16"></script>
 <script>tailwind.config={theme:{extend:{colors:{primary:'#2dbbfe',secondary:'#2dbbfe'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
 <!----------------------- remixicon ----------------------------->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+<!---------------------- Select2 CSS ------------------------------->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+<!----------------------- Select2 JS -------------------------------->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <style>
 :where([class^="ri-"])::before {
@@ -58,6 +67,8 @@ table tbody tr:hover {
   }
 
 </style>
+
+<!-- 확인작업 -->
 
 </head>
 

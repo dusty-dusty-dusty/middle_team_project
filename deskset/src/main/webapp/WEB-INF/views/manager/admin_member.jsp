@@ -35,9 +35,6 @@
 		<section class="bg-white rounded shadow-sm p-6">
 			<div class="flex justify-between items-center mb-6">
 				<h2 class="text-lg font-medium">회원 목록</h2>
-				<button
-					class="bg-primary text-white py-2 px-6 rounded-button hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 whitespace-nowrap">
-					등록</button>
 			</div>
 			<div class="overflow-x-auto">
 				<table class="min-w-full divide-y divide-gray-200">
@@ -74,8 +71,8 @@
 							<td class="px-6 py-4 whitespace-nowrap">
 								<div class="text-sm font-medium text-gray-900">admin_kim</div>
 							</td>
-							<td class="px-6 py-4 whitespace-nowrap"><a href="#"
-								class="text-sm text-primary hover:underline">00000001</a></td>
+							<td class="px-6 py-4 whitespace-nowrap"><a href='/deskset/manager/admin_memcheck'
+								class="admin_memcheck_btn text-sm text-primary hover:underline">00000001</a></td>
 							<td class="px-6 py-4 whitespace-nowrap">
 								<div class="text-sm text-gray-500">kim.mj@example.com</div>
 							</td>

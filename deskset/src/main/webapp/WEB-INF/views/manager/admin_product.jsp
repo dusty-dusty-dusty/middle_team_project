@@ -10,12 +10,32 @@
 		</header>
 		<!-- 검색 섹션 -->
 		<section class="bg-white rounded shadow-sm p-6 mb-8">
-			<h2 class="text-lg font-semibold mb-4">카테고리</h2>
-			<form action='' method=''>
-				<label><input type='radio' name='' value='' />키보드</label>
-				<label><input type='radio' name='' value='' />마우스</label>
-				<label><input type='radio' name='' value='' />모니터</label>
-			</form>
+			<div class="flex items-center justify-between mb-4">
+				<h2 class="text-lg font-semibold mb-4">카테고리</h2>
+				<a 
+				href='/deskset/manager/admin_cateregi'
+				class="admin_cateregi_btn bg-primary text-white py-px px-2	 rounded-button hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 whitespace-nowrap">
+				카테고리 등록
+				</a>
+			</div>
+			
+			<div class="flex gap-2">
+			  <label class="cursor-pointer px-4 py-2 border border-gray-300 rounded-full text-gray-700 transition-all duration-200 hover:bg-gray-100">
+			  	<input type="checkbox" class="hidden toggle-checkbox" value="1">
+			  	<span class="label-text">옵션 1</span>
+ 			  </label>
+
+			  <label class="cursor-pointer px-4 py-2 border border-gray-300 rounded-full text-gray-700 transition-all duration-200 hover:bg-gray-100">
+			    <input type="checkbox" class="hidden toggle-checkbox" value="2">
+			    <span class="label-text">옵션 2</span>
+			  </label>
+
+			  <label class="cursor-pointer px-4 py-2 border border-gray-300 rounded-full text-gray-700 transition-all duration-200 hover:bg-gray-100">
+			    <input type="checkbox" class="hidden toggle-checkbox" value="3">
+			    <span class="label-text">옵션 3</span>
+			  </label>
+			</div>
+			
 			<br/>
 			<h2 class="text-lg font-semibold mb-4">상품 검색</h2>
 			<div class="flex flex-wrap items-center gap-4">
@@ -42,9 +62,10 @@
 		<section class="bg-white rounded shadow-sm p-6">
 			<div class="flex justify-between items-center mb-6">
 				<h2 class="text-lg font-semibold">상품 목록</h2>
-				<button
-					class="bg-primary text-white py-2 px-6 rounded-button hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 whitespace-nowrap">
-					등록</button>
+				<a
+					href='/deskset/manager/admin_proregi'
+					class="admin_proregi_btn bg-primary text-white py-2 px-6 rounded-button hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 whitespace-nowrap">
+					등록</a>
 			</div>
 			<div class="overflow-x-auto">
 				<table class="min-w-full divide-y divide-gray-200">

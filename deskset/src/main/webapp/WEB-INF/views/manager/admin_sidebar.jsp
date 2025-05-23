@@ -41,6 +41,12 @@
 								<i class="ri-file-list-line"></i>
 							</div> <span>게시판관리</span>
 					</a></li>
+					<li><a href="${pageContext.request.contextPath}/manager/admin_order"
+						class="sidebar-menu-item flex items-center px-4 py-3 text-gray-600 hover:text-primary">
+							<div class="w-6 h-6 flex items-center justify-center mr-3">
+								<i class="ri-file-list-line"></i>
+							</div> <span>주문관리</span>
+					</a></li>
 				</ul>
 			</nav>
 		</aside>

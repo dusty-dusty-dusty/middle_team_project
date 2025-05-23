@@ -10,7 +10,7 @@
 <body>
 
 <a href='manager/admin'>관리자페이지</a>
-<a href=''></a>
+<a href='manager/admin_login'>관리자 로그인</a>
 <a href=''></a>
 <a href=''></a>
 <a href=''></a>
