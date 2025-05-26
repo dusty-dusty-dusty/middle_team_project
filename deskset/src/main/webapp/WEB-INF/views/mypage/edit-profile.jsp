@@ -246,10 +246,10 @@
                                placeholder="변경할 비밀번호를 입력해주세요">
                         <div class="password-requirements">
                             <div id="lengthCheck" class="requirement">
-                                <span class="icon">❌</span> 5자 이상
+                                <span class="icon">❌</span> 8자 이상
                             </div>
-                            <div id="letterCheck" class="requirement">
-                                <span class="icon">❌</span> 영문자 대/소문자 포함
+                            <div id="specialCharCheck" class="requirement">
+                                <span class="icon">❌</span> 특수문자 2개 이상
                             </div>
                         </div>
                     </div>
@@ -295,8 +295,8 @@
     <script>
     function validatePassword(password) {
         const checks = {
-            length: password.length >= 5,
-            letter: /[A-Za-z]/.test(password)
+            length: password.length >= 8,
+            specialChar: (password.match(/[!@#$%^&*(),.?":{}|<>]/g) || []).length >= 2
         };
         return checks;
     }
@@ -317,16 +317,16 @@
             lengthCheck.classList.remove('valid');
         }
         
-        // 영문자 체크
-        const letterCheck = document.getElementById('letterCheck');
-        if (validations.letter) {
-            letterCheck.querySelector('.icon').textContent = '✓';
-            letterCheck.classList.add('valid');
-            letterCheck.classList.remove('invalid');
+        // 특수문자 체크
+        const specialCharCheck = document.getElementById('specialCharCheck');
+        if (validations.specialChar) {
+            specialCharCheck.querySelector('.icon').textContent = '✓';
+            specialCharCheck.classList.add('valid');
+            specialCharCheck.classList.remove('invalid');
         } else {
-            letterCheck.querySelector('.icon').textContent = '❌';
-            letterCheck.classList.add('invalid');
-            letterCheck.classList.remove('valid');
+            specialCharCheck.querySelector('.icon').textContent = '❌';
+            specialCharCheck.classList.add('invalid');
+            specialCharCheck.classList.remove('valid');
         }
         
         // 비밀번호 확인 체크
@@ -355,43 +355,18 @@
         }
     }
 
+    // 폼 유효성 검사
     document.getElementById('editProfileForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        const password = document.getElementById('memPwd').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        
-        if (password) {
-            const validations = validatePassword(password);
-            if (!validations.length || !validations.letter) {
-                Swal.fire({
-                    title: '비밀번호 오류',
-                    text: '비밀번호는 5자 이상이며 영문자를 포함해야 합니다.',
-                    icon: 'error',
-                    confirmButtonText: '확인',
-                    confirmButtonColor: '#00a8e8'
-                });
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                Swal.fire({
-                    title: '비밀번호 불일치',
-                    text: '비밀번호가 일치하지 않습니다.',
-                    icon: 'error',
-                    confirmButtonText: '확인',
-                    confirmButtonColor: '#00a8e8'
-                });
-                return;
-            }
-        }
         
         // 필수 필드 검사
         const requiredFields = {
             'memName': '이름을 입력해주세요',
             'memId': '아이디를 입력해주세요',
-            'memTel': '휴대폰 번호를 입력해주세요',
+            'memPwd': '비밀번호를 입력해주세요',
+            'confirmPassword': '비밀번호 확인을 입력해주세요',
             'memEmail': '이메일을 입력해주세요',
+            'memTel': '휴대폰 번호를 입력해주세요',
             'memAddr': '주소를 입력해주세요'
         };
         
@@ -410,6 +385,22 @@
             }
         }
         
+        // 비밀번호 일치 여부 확인
+        const password = document.getElementById('memPwd').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (password !== confirmPassword) {
+            document.getElementById('confirmPassword').focus();
+            Swal.fire({
+                title: '비밀번호 불일치',
+                text: '비밀번호가 일치하지 않습니다.',
+                icon: 'error',
+                confirmButtonText: '확인',
+                confirmButtonColor: '#00a8e8'
+            });
+            return;
+        }
+
         // 휴대폰 번호 형식 검사
         const telPattern = /^[0-9]{3}-[0-9]{4}-[0-9]{4}$/;
         const telField = document.getElementById('memTel');
@@ -438,7 +429,7 @@
             });
             return;
         }
-
+        
         // 수정 확인 대화상자
         Swal.fire({
             title: '개인정보 수정',
@@ -453,6 +444,61 @@
             if (result.isConfirmed) {
                 this.submit();
             }
+        });
+    });
+
+    // 중복확인 버튼 클릭 이벤트
+    document.querySelector('.check-button').addEventListener('click', function() {
+        const memId = document.getElementById('memId').value.trim();
+        if (!memId) {
+            document.getElementById('memId').focus();
+            Swal.fire({
+                title: '필수 입력',
+                text: '아이디를 입력해주세요',
+                icon: 'warning',
+                confirmButtonText: '확인',
+                confirmButtonColor: '#00a8e8'
+            });
+            return;
+        }
+        
+        // 서버에 중복 확인 요청
+        fetch('/mypage/check-id?memId=' + memId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+        .then(response => response.json())
+        .then(available => {
+            if (available) {
+                Swal.fire({
+                    title: '사용 가능',
+                    text: '사용 가능한 아이디입니다.',
+                    icon: 'success',
+                    confirmButtonText: '확인',
+                    confirmButtonColor: '#00a8e8'
+                });
+            } else {
+                Swal.fire({
+                    title: '중복',
+                    text: '이미 사용 중인 아이디입니다.',
+                    icon: 'error',
+                    confirmButtonText: '확인',
+                    confirmButtonColor: '#00a8e8'
+                });
+                document.getElementById('memId').focus();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                title: '오류',
+                text: '서버 오류가 발생했습니다. 다시 시도해주세요.',
+                icon: 'error',
+                confirmButtonText: '확인',
+                confirmButtonColor: '#00a8e8'
+            });
         });
     });
     </script>
