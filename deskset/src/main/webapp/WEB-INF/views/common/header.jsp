@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -63,8 +64,15 @@ nav a:hover {
     <a href="#">MYPAGE</a>
   </nav>
   <div class="login-area">
-    <a href="#">Login</a>
-    <a href="#">Register</a>
+	<c:if test="${empty sessionScope.loggedInUser}">
+      <a href="${pageContext.request.contextPath}/user/login">Login</a>
+      <a href="${pageContext.request.contextPath}/user/register">Register</a>
+    </c:if>
+    <c:if test="${not empty sessionScope.loggedInUser}">
+      <a href="${pageContext.request.contextPath}/user/logout">Logout</a>
+      <a href="${pageContext.request.contextPath}/cart">Cart</a>
+    </c:if>
+    
     <a href="#">Search</a>
   </div>
 </header>

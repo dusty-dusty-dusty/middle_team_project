@@ -6,7 +6,7 @@
 <mapper namespace="com.mid.login.repo.UserDAO">
 
     <!-- 회원 등록 -->
-    <insert id="insertUser" parameterType="com.mid.login.model.UserInfoDTO">
+    <insert id="insertUser" parameterType="com.mid.login.model.UserInfoVO">
         INSERT INTO MEMBER (
             mem_no,
             mem_name,
@@ -29,7 +29,7 @@
     </insert>
 
     <!-- 회원 정보 조회 (로그인) -->
-    <select id="getUserInfo" resultType="com.mid.login.model.UserInfoDTO">
+    <select id="getUserInfo" resultType="com.mid.login.model.UserInfoVO">
         SELECT 
             mem_no AS memNo,
             mem_name AS memName,
