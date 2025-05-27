@@ -1,6 +1,7 @@
 package com.mid.manager.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -37,19 +38,8 @@ public class AdminController {
 	@RequestMapping("manager/admin_memcheck")
 	public void memberCheck() {
 	}
-//---------------------------------------------------------
-	//관리자 페이지-상품 관리
-	@RequestMapping("manager/admin_product")
-	public void productAdministration() {
-	}
-	//관리자 페이지-상품 관리-카테고리 등록
-	@RequestMapping("manager/admin_cateregi")
-	public void categoriRegister() {
-	}
-	//관리자 페이지-상품 관리-상품 등록
-	@RequestMapping("manager/admin_proregi")
-	public void productRegister() {
-	}
+
+
 //-------------------------------------------------------
 	//관리자 페이지-게시판 관리
 	@RequestMapping("manager/admin_notice")
