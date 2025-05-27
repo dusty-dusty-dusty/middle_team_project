@@ -1,0 +1,348 @@
+/* =============================
+   怨듯넻 �뤌 移대뱶 �뒪���씪
+   ============================= */
+.form-card {
+    border: none;
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 18px;
+    background: #fff;
+    margin-top: 60px;
+    transition: box-shadow 0.2s;
+}
+
+.form-card:hover {
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+}
+
+/* =============================
+   移대뱶 �궡遺� �뙣�뵫
+   ============================= */
+.form-card .card-body {
+    padding: 2.5rem 2.5rem 2rem 2.5rem;
+}
+
+/* =============================
+   �뤌 而⑦뀒�씠�꼫(媛�濡� 理쒕� �꼫鍮�)
+   ============================= */
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* =============================
+   濡쒓퀬/�궗�씠�듃紐�
+   ============================= */
+.login-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    font-size: 2.1rem;
+    font-weight: bold;
+    color: #00a8e8;
+    letter-spacing: 1px;
+}
+
+/* =============================
+   �엯�젰李� �뒪���씪 (�븘�씠肄� �룷�븿)
+   ============================= */
+.input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+.input-group .input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #bdbdbd;
+    font-size: 1.1rem;
+}
+.form-control {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0.9rem 1rem 0.9rem 2.7rem;
+    font-size: 1.05rem;
+    background: #fafbfc;
+    transition: border-color 0.2s;
+}
+.form-control:focus {
+    border-color: #00a8e8;
+    background: #fff;
+    box-shadow: 0 0 0 0.15rem rgba(0, 168, 232, 0.10);
+}
+
+/* =============================
+   踰꾪듉 �뒪���씪
+   ============================= */
+.btn-primary {
+    background: linear-gradient(90deg, #00a8e8 0%, #0077b6 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 0.95rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,168,232,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover {
+    background: linear-gradient(90deg, #0096d1 0%, #005f73 100%);
+    box-shadow: 0 4px 16px rgba(0,168,232,0.13);
+}
+
+/* =============================
+   留곹겕 �뒪���씪
+   ============================= */
+.login-links {
+    margin-top: 1.7rem;
+    text-align: center;
+    font-size: 0.98rem;
+}
+.login-links a {
+    color: #00a8e8;
+    font-weight: 500;
+    margin: 0 0.5rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.login-links a:hover {
+    color: #0096d1;
+    text-decoration: underline;
+}
+
+/* =============================
+   諛섏쓳�삎
+   ============================= */
+@media (max-width: 600px) {
+    .form-container {
+        max-width: 98vw;
+        padding: 0 8px;
+    }
+    .form-card .card-body {
+        padding: 1.2rem 0.5rem 1.5rem 0.5rem; /* �긽 �슦 �븯 醫� �닚�꽌濡� �뙣�뵫 吏��젙 */
+        /* �긽�떒 �뿬諛�: 1.2rem */
+        /* �삤瑜몄そ �뿬諛�: 0.5rem */
+        /* �븯�떒 �뿬諛�: 1.5rem */
+        /* �쇊履� �뿬諛�: 0.5rem */
+    }
+    .login-logo {
+        font-size: 1.4rem;
+    }
+}
+
+/* =============================
+   以묐났�솗�씤 踰꾪듉 (�쉶�썝媛��엯)
+   ============================= */
+.check-button {
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 100px;
+    height: 42px;
+    background-color: #00a8e8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+.check-button:hover {
+    background-color: #0096d1;
+}
+
+#idCheckResult {
+    margin-top: 5px;
+    font-size: 0.875rem;
+}
+
+/* =============================
+   �뿉�윭 硫붿떆吏�
+   ============================= */
+.text-danger {
+    color: #dc3545 !important;
+}
+
+/* =============================
+   �쟾泥� �젅�씠�븘�썐 (醫�:�씠誘몄�, �슦:�뤌)
+   ============================= */
+.login-layout {
+    display: flex;
+    min-height: 80vh;
+    background: #f5f5f5;
+}
+.login-image-area {
+    flex: 0.6 1 0;
+    background: #e5e5e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #888;
+    border: 1px solid #ddd;
+    min-width: 0;
+}
+.left-image {
+    border-right: none;
+}
+.right-image {
+    border-left: none;
+}
+
+/* =============================
+   �뤌 �쁺�뿭
+   ============================= */
+.login-form-area {
+    flex: 1 1 0;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 0;
+}
+
+.login-title {
+    font-size: 2.7rem;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.login-input {
+    width: 100%;
+    padding: 0.95rem 1.1rem;
+    border: 1.5px solid #ddd;
+    border-radius: 7px;
+    font-size: 1.08rem;
+    background: #fafbfc;
+    transition: border-color 0.2s;
+}
+.login-input:focus {
+    border-color: #00a8e8;
+    background: #fff;
+    outline: none;
+}
+
+.id-row {
+    display: flex;
+    gap: 8px;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    align-items: center;
+}
+/* �븘�씠�뵒 �엯�젰移� �꼫鍮꾨�� �닔�룞�쑝濡� 議곗젅�븯�젮硫� �븘�옒 width 媛믪쓣 蹂�寃쏀븯�꽭�슂 */
+.id-row .login-input {
+    width: 250px; /* �넀 �씠 遺�遺꾩쓣 �썝�븯�뒗 媛믪쑝濡� 議곗젅�븯�꽭�슂 (�삁: 250px, 300px �벑) */
+}
+.check-btn {
+    padding: 0 18px; /* 醫뚯슦 �뿬諛깆쓣 以꾩뿬 踰꾪듉�쓣 �쟻�떦�엳 以꾩엫 */
+    border: none; /* �뀒�몢由� �뾾�쓬 */
+    background: #29b6f6; /* �뙆���깋 諛곌꼍 */
+    color: #fff; /* 湲��옄�깋 �씛�깋 */
+    border-radius: 7px; /* 紐⑥꽌由� �뫁湲�寃� */
+    font-size: 1.08rem; /* 湲��옄 �겕湲� �빟媛� 以꾩엫 */
+    font-weight: 600; /* 湲��옄 �몢猿띻쾶 */
+    cursor: pointer; /* 留덉슦�뒪 �삤踰� �떆 �룷�씤�꽣 */
+    height: 40px; /* 踰꾪듉 �넂�씠 以꾩엫 */
+    transition: background 0.2s, box-shadow 0.2s; /* 諛곌꼍, 洹몃┝�옄 遺��뱶�읇寃� �쟾�솚 */
+    box-shadow: 0 2px 8px rgba(41,182,246,0.08); /* 洹몃┝�옄 �슚怨� */
+    margin-right: 80px; /* �쇊履쎌쑝濡� �씠�룞(�뿬諛� 議곗젅, �쟻�떦�엳 以꾩엫) */
+    margin-left: 0; /* �쇊履� �뿬諛� �뾾�쓬 */
+    display: flex; /* �궡遺� �슂�냼 �젙�젹�쓣 �쐞�빐 flex �궗�슜 */
+    align-items: center; /* �꽭濡� 以묒븰 �젙�젹 */
+    justify-content: center; /* 媛�濡� 以묒븰 �젙�젹 */
+    min-width: 90px; /* 踰꾪듉 理쒖냼 �꼫鍮� 以꾩엫 */
+}
+.check-btn:hover {
+    background: #039be5;
+    box-shadow: 0 4px 16px rgba(41,182,246,0.13);
+}
+
+.login-btn {
+    width: 100%;
+    background: #29b6f6;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 1.1rem 0; /* �쐞�븘�옒 padding�쓣 以꾩엫 */
+    font-size: 1.18rem;
+    font-weight: 600;
+    margin-top: 18px;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+}
+.login-btn:hover {
+    background: #039be5;
+}
+
+.sub-btn {
+    background: #fff;
+    border: 1.5px solid #bbb;
+    border-radius: 7px;
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 18px;
+    transition: background 0.2s, border 0.2s;
+}
+.sub-btn:hover {
+    background: #f0f8ff;
+    border: 1.5px solid #00a8e8;
+}
+
+.login-links-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 18px;
+    margin-top: 10px;
+    font-size: 1.02rem;
+}
+.login-links-row a {
+    color: #29b6f6;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.login-links-row a:hover {
+    color: #039be5;
+    text-decoration: underline;
+}
+
+.register-info {
+    font-size: 0.92rem;
+    color: #444;
+    margin: 10px 0 0 2px;
+    text-align: left;
+}
+
+@media (max-width: 900px) {
+    .login-layout {
+        flex-direction: column;
+    }
+    .login-image-area {
+        min-height: 180px;
+        border: none;
+    }
+    .login-form-area {
+        padding: 30px 0;
+    }
+} 
