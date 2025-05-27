@@ -388,4 +388,4 @@ public class MypageController { // 마이페이지 관련 요청을 처리하는
             return "{\"success\": false, \"message\": \"수량 업데이트 중 오류가 발생했습니다.\"}";
         }
     }
-} // 컨트롤러 클래스 종료
+} 
