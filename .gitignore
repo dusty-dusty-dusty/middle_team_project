@@ -25,7 +25,3 @@ target/
 *.class
 *.war
 *.jar
-
-.classpath
-.project
-.settings/
