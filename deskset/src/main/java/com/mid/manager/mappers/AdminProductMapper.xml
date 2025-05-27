@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mid.manager.repo.AdminProductDAO">
+	
+	
+	
+	<!-- 카테고리 리스트 불러오기 -->	
+	<select id="getCategoryListAD" resultType="com.mid.manager.model.CategoryVO">
+		SELECT *
+		FROM CATEGORY
+	</select>
+	
+	<!-- 제품 리스트 불러오기 -->
+	<select id="getProductListAD" resultType="com.mid.manager.model.ProductVO">
+		SELECT
+			p.product_no,
+			c.cate_name,
+			a.admin_name,
+			p.product_name,
+			p.product_mfc,
+			p.product_price,
+			p.product_stock,
+			p.product_image,
+			p.product_thum,
+			p.product_cont
+		FROM PRODUCT p
+		LEFT JOIN CATEGORY c ON p.cate_id = c.cate_id
+		LEFT JOIN ADMIN a ON p.admin_no = a.admin_no
+	</select> 
+
+
+
+
+</mapper>
