@@ -37,8 +37,8 @@
         content: '';
         position: absolute;
         bottom: 0;
-        left: 60%;
-        width: 188px;
+        left: 0;
+        width: 100%;
         height: 3px;
         background-color: #00a8e8;
     }
