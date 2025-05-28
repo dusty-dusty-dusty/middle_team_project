@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mid.product.repo.ProductDAO">
+
+	<!-- 메인페이지 상품을 무작위로 정렬  -->
+	<select id="getRandomProducts" parameterType="String" resultType="com.mid.product.model.ProductVO">
+	 <![CDATA[
+  SELECT 
+    PRODUCT_NO, PRODUCT_NAME, PRODUCT_PRICE, PRODUCT_IMAGE, PRODUCT_THUM, PRODUCT_MFC
+  FROM (
+    SELECT 
+      PRODUCT_NO, PRODUCT_NAME, PRODUCT_PRICE, PRODUCT_IMAGE, PRODUCT_THUM, PRODUCT_MFC
+    FROM PRODUCT
+    ORDER BY DBMS_RANDOM.VALUE
+  )
+  WHERE ROWNUM < 6
+   ]]>
+</select>
+
+
+
+
+  <!-- 상품 상세 조회 -->
+  <select id="getProductByNo" parameterType="com.mid.product.model.ProductVO" resultType="com.mid.product.model.ProductVO">
+    SELECT 
+      PRODUCT_NO, PRODUCT_NAME, PRODUCT_PRICE, PRODUCT_IMAGE, PRODUCT_THUM, PRODUCT_MFC, PRODUCT_CONT
+    FROM PRODUCT
+    WHERE PRODUCT_NO = #{product_no}
+  </select>
+
+  
+
+  <!-- 키보드 필터링 검색 -->
+  <select id="getKeyboardList" parameterType="map" resultType="com.mid.product.model.ProductVO">
+    SELECT 
+      P.PRODUCT_NO, P.PRODUCT_NAME, P.PRODUCT_PRICE, P.PRODUCT_IMAGE, P.PRODUCT_THUM, P.PRODUCT_MFC
+    FROM PRODUCT P
+    WHERE P.CATE_ID = 'CTG001'
+
+    <if test="brand != null and brand.size() > 0">
+      AND P.PRODUCT_MFC IN
+      <foreach item="item" collection="brand" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+
+    <if test="switch != null and switch.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AK002'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="switch" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="layout != null and layout.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AK001'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="layout" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="interface != null and interface.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AK004'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="interface" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="response != null and response.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AK005'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="response" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="housing != null and housing.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AK006'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="housing" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <choose>
+      <when test="sort == 'newest'">
+        ORDER BY P.PRODUCT_NO DESC
+      </when>
+      <when test="sort == 'lowPrice'">
+        ORDER BY P.PRODUCT_PRICE ASC
+      </when>
+      <when test="sort == 'highPrice'">
+        ORDER BY P.PRODUCT_PRICE DESC
+      </when>
+      <otherwise>
+        ORDER BY DBMS_RANDOM.VALUE
+      </otherwise>
+    </choose>
+  </select>
+
+
+
+
+  <!-- 마우스 필터링 검색 -->
+  <select id="getMouseList" parameterType="map" resultType="com.mid.product.model.ProductVO">
+    SELECT 
+      P.PRODUCT_NO, P.PRODUCT_NAME, P.PRODUCT_PRICE, P.PRODUCT_IMAGE, P.PRODUCT_THUM, P.PRODUCT_MFC
+    FROM PRODUCT P
+    WHERE P.CATE_ID = 'CTG002'
+
+    <if test="weight != null and weight.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AM007'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="weight" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="dpi != null and dpi.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AM008'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="dpi" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="response != null and response.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AM009'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="response" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="sensor != null and sensor.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AM010'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="sensor" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="switch != null and switch.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AM011'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="switch" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="interface != null and interface.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AM012'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="interface" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <choose>
+      <when test="sort == 'newest'">
+        ORDER BY P.PRODUCT_NO DESC
+      </when>
+      <when test="sort == 'lowPrice'">
+        ORDER BY P.PRODUCT_PRICE ASC
+      </when>
+      <when test="sort == 'highPrice'">
+        ORDER BY P.PRODUCT_PRICE DESC
+      </when>
+      <otherwise>
+        ORDER BY DBMS_RANDOM.VALUE
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- 모니터 필터링 검색 -->
+  <select id="getMonitorList" parameterType="map" resultType="com.mid.product.model.ProductVO">
+    SELECT 
+      P.PRODUCT_NO, P.PRODUCT_NAME, P.PRODUCT_PRICE, P.PRODUCT_IMAGE, P.PRODUCT_THUM, P.PRODUCT_MFC
+    FROM PRODUCT P
+    WHERE P.CATE_ID = 'CTG003'
+
+    <if test="size != null and size.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AT013'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="size" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="panel != null and panel.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AT014'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="panel" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="resolution != null and resolution.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AT015'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="resolution" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="hz != null and hz.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AT016'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="hz" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <if test="response != null and response.size() > 0">
+      AND EXISTS (
+        SELECT 1 FROM ATTR_VALUE AV WHERE AV.PRODUCT_NO = P.PRODUCT_NO 
+        AND AV.ATTR_ID = 'AT017'
+        AND AV.ATTR_VALUE IN
+        <foreach item="item" collection="response" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      )
+    </if>
+
+    <choose>
+      <when test="sort == 'newest'">
+        ORDER BY P.PRODUCT_NO DESC
+      </when>
+      <when test="sort == 'lowPrice'">
+        ORDER BY P.PRODUCT_PRICE ASC
+      </when>
+      <when test="sort == 'highPrice'">
+        ORDER BY P.PRODUCT_PRICE DESC
+      </when>
+      <otherwise>
+        ORDER BY DBMS_RANDOM.VALUE
+      </otherwise>
+    </choose>
+  </select>
+
+	<!-- 리뷰 order_detail_no찿기  -->
+	<select id ="getOrderDetailNo" resultType="String">
+	SELECT ORDER_DETAIL_NO
+	FROM ORDERS_DETAIL
+	WHERE PRODUCT_NO =#{product_no}
+	AND MEM_NO =#{mem_no}
+	FETCH FIRST 1 ROWS ONLY
+	
+	</select>
+
+
+
+
+
+
+	
+	<!-- 제품별 리뷰 -->
+	<select id= "getReviewsByProductNo" parameterType="String" resultType="com.mid.product.model.ReviewVO">
+		select
+			R.REVIEW_NO,
+			R.ORDER_DETAIL_NO,
+			R.MEM_NO,
+			R.REVIEW_CONT,
+			R.REVIEW_RATING,
+			R.REVIEW_IMAGE,
+			R.REVIEW_DATE
+		FROM REVIEW R
+		JOIN ORDERS_DETAIL O ON R.ORDER_DETAIL_NO = O.ORDER_DETAIL_NO
+    	WHERE O.PRODUCT_NO = #{product_no}
+    	ORDER BY R.REVIEW_DATE DESC
+	
+</select>
+
+
+
+	<!-- 리뷰 등록 -->
+<insert id="insertReview" parameterType="com.mid.product.model.ReviewVO">
+    INSERT INTO REVIEW (
+        ORDER_DETAIL_NO,
+        MEM_NO,
+        REVIEW_CONT,
+        REVIEW_RATING,
+        REVIEW_DATE
+    ) VALUES (
+        #{order_detail_no},
+        #{mem_no},
+        #{review_cont},
+        #{review_rating},
+        SYSDATE
+    )
+</insert>
+
+
+
+	
+	
+	
+	
+</mapper>

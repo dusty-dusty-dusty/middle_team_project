@@ -10,3 +10,4 @@ public interface OrderDAO {
     void updateOrderStatus(OrderVO order);
     List<OrderVO> getOrderListByMemberId(String memId);
 } 
+// 수정
