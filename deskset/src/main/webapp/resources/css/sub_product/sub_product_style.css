@@ -1,0 +1,263 @@
+body {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: #f5f5f5;
+}
+
+.product-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #fff;
+}
+
+.product-inner {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.product-image img {
+  width: 320px;
+  height: auto;
+  border: 1px solid #ddd;
+  object-fit: contain;
+}
+
+.product-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.product-name {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: -25px;
+}
+
+.product-price {
+  font-size: 22px;
+  color: #f03e3e;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.product-spec {
+  list-style: none;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.product-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.product-buttons button {
+  flex: 1;
+  padding: 12px 0;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-cart {
+  background-color: #ddd;
+}
+
+.btn-buy {
+  background-color: #333;
+  color: white;
+}
+
+.product-detail h3 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.detail-image img {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.product-quantity {
+  margin: 20px 0;
+  font-size: 16px;
+}
+
+.quantity-box {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.qty-btn {
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  text-align: center;
+  background-color: #eee;
+  border: none;
+  cursor: pointer;
+}
+
+#quantity {
+  width: 50px;
+  height: 30px;
+  text-align: center;
+}
+
+/* 탭 메뉴 전체 박스 */
+.product-tab {
+  position: sticky;
+  top: 60px; /* 필요에 따라 50~70px 조정 */
+  background-color: #fff;
+  z-index: 999;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  margin: 0;
+  padding: 0;
+}
+
+/* 탭 리스트 */
+.tab-menu {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  gap: 40px;
+}
+
+/* 탭 항목 */
+.tab-menu li {
+  margin: 0;
+  padding: 0;
+}
+
+/* 탭 링크 */
+.tab-menu a {
+  display: inline-block;
+  padding: 15px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.25s ease-in-out;
+}
+
+/* 활성 탭 또는 hover 시 */
+.tab-menu a:hover,
+.tab-menu a.active {
+  color: #007bff;
+  border-color: #007bff;
+}
+
+/* 밑줄 강조 스타일 개선 (선택) */
+.tab-menu a.active::after {
+  content: "";
+  display: block;
+  margin: auto;
+  width: 100%;
+  height: 2px;
+  background: #007bff;
+}
+
+/* 리뷰 전체 영역 */
+.product-review {
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ddd;
+}
+
+/* 리뷰 제목 */
+.product-review h3 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  border-left: 5px solid #007bff;
+  padding-left: 10px;
+  color: #333;
+}
+
+/* 리뷰 작성 폼 */
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+}
+
+.review-form input[type="text"],
+.review-form textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.review-form button {
+  align-self: flex-end;
+  padding: 10px 20px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.review-form button:hover {
+  background-color: #0056b3;
+}
+
+/* 리뷰 리스트 */
+.review-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.review-item {
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.review-header strong {
+  color: #333;
+  font-weight: bold;
+}
+
+.review-content {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.6;
+}
