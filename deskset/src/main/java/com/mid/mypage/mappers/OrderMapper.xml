@@ -11,7 +11,6 @@
       o.ORDER_DATE as orderDate,
       o.TOTAL_AMOUNT as totalAmount,
       o.ORDER_STATUS as orderStatus,
-      o.DELIVERY_ADDRESS as deliveryAddress,
       o.PAY_NO as paymentMethod,
       p.PRODUCT_NAME as productName,
       p.PRODUCT_PRICE as productPrice
