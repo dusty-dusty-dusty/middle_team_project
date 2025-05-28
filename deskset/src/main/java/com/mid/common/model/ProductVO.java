@@ -1,4 +1,4 @@
-package com.mid.manager.model;
+package com.mid.common.model;
 
 import lombok.Data;
 

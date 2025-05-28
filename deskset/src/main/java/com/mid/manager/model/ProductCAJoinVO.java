@@ -3,7 +3,7 @@ package com.mid.manager.model;
 import lombok.Data;
 
 @Data
-public class ProductVO {
+public class ProductCAJoinVO {
 	private String product_no;
 	private String cate_id;
 	private String admin_no;
@@ -14,5 +14,7 @@ public class ProductVO {
 	private String product_image;
 	private String product_thum;
 	private String product_cont;
-
+	
+	private String cate_name;
+	private String admin_name;
 }
