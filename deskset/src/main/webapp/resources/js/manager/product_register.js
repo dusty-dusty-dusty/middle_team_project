@@ -51,7 +51,7 @@ $(document).ready(function() {
     // 카테고리별 필드 로딩 함수
     function loadCategoryFields(category) {
         $.ajax({
-            url: '/api/category-fields',
+            url: 'category-fields',
             type: 'GET',
             data: { category: category },
             success: function(response) {
@@ -59,8 +59,8 @@ $(document).ready(function() {
                 $('#categoryFields').empty();
                 
                 // 서버에서 받은 필드 데이터로 HTML 생성
-                if (response.fields && response.fields.length > 0) {
-                    $.each(response.fields, function(index, field) {
+                if (response.result && response.result.length > 0) {
+                    $.each(response.result, function(index, field) {
                         var fieldHtml = generateFieldHtml(field);
                         $('#categoryFields').append(fieldHtml);
                     });
@@ -241,7 +241,7 @@ $(document).ready(function() {
                 
                 // 리디렉션 전 잠시 대기
                 setTimeout(function() {
-                    window.location.href = '/products';
+                    window.location.href = 'manager/admin_product';
                 }, 1000);
             },
             error: function(xhr, status, error) {
@@ -306,7 +306,18 @@ $(document).ready(function() {
     // 취소 버튼 클릭 이벤트 (이벤트 위임)
     $(document).on('click', '#cancelBtn', function() {
         if (confirm('작성 중인 내용이 저장되지 않습니다. 정말 취소하시겠습니까?')) {
-            window.location.href = '/products';
+		    $.ajax({
+		        url: "admin_product",
+		        method: 'GET',
+		        success: function(data) {
+		            $('#main-content').html(data);
+		        },
+		        error: function() {
+		            alert('컨텐츠를 불러오는 데 실패했습니다.');
+		        }
+		    });
+
+/*window.location.href = 'admin_product';*/
         }
     });
     

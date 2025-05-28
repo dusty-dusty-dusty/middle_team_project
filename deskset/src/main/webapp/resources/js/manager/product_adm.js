@@ -1,8 +1,181 @@
 $(function(){
 //--------------------카테고리 체크 박스 목록 출력-------------------
+    // 카테고리 체크박스 변경 이벤트
+    $(document).on('change', '.toggle-checkbox', function() {
+        updateCategoryVisual($(this));
+        filterProductsByCategory();
+    });
+    
+    // 카테고리 라벨 클릭 이벤트 (체크박스 토글)
+    $(document).on('click', '.cursor-pointer', function(e) {
+        e.preventDefault();
+        const checkbox = $(this).find('.toggle-checkbox');
+        checkbox.prop('checked', !checkbox.prop('checked'));
+        updateCategoryVisual(checkbox);
+        filterProductsByCategory();
+    });
+    
+    // 카테고리 시각적 업데이트
+    function updateCategoryVisual(checkbox) {
+        const label = checkbox.closest('label');
+        if (checkbox.prop('checked')) {
+            label.removeClass('border-gray-300 text-gray-700 hover:bg-gray-100')
+                 .addClass('border-primary bg-primary text-white');
+        } else {
+            label.removeClass('border-primary bg-primary text-white')
+                 .addClass('border-gray-300 text-gray-700 hover:bg-gray-100');
+        }
+    }
+    
+    // 선택된 카테고리에 따른 상품 필터링
+    function filterProductsByCategory() {
+        const selectedCategories = [];
+        
+        // 선택된 카테고리 수집
+        $('.toggle-checkbox:checked').each(function() {
+            const categoryName = $(this).siblings('.label-text').text();
+            selectedCategories.push(categoryName);
+        });
+        
+        // 전체 선택 또는 선택된 카테고리가 없으면 전체 상품 표시
+        if (selectedCategories.length === 0) {
+            loadAllProducts();
+        } else {
+            loadProductsByCategories(selectedCategories);
+        }
+    }
+    
+    // 전체 상품 로드
+    function loadAllProducts() {
+        $.ajax({
+            url: '/deskset/manager/admin_product_list',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                updateProductTable(data);
+            },
+            error: function() {
+                alert('상품 목록을 불러오는 데 실패했습니다.');
+            }
+        });
+    }
+    
+    // 선택된 카테고리의 상품 로드
+    function loadProductsByCategories(categories) {
+        $.ajax({
+            url: '/deskset/manager/admin_product_filter',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({categories: categories}),
+            dataType: 'json',
+            success: function(data) {
+                updateProductTable(data);
+            },
+            error: function() {
+                alert('상품 필터링에 실패했습니다.');
+            }
+        });
+    }
+    
+    // 상품 테이블 업데이트
+    function updateProductTable(products) {
+        let tableHtml = `
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상품번호</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상품명</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">카테고리</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">제조사</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">가격</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">관리자</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">`;
+        
+        if (products && products.length > 0) {
+            products.forEach(function(product) {
+                tableHtml += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${product.product_no}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <a href="#" class="text-sm text-primary hover:underline">${product.product_name}</a>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${product.cate_name}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">${product.product_mfc}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">${product.product_price.toLocaleString()}원</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">${product.admin_name}</div>
+                        </td>
+                    </tr>`;
+            });
+        } else {
+            tableHtml += `
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                        선택된 카테고리에 해당하는 상품이 없습니다.
+                    </td>
+                </tr>`;
+        }
+        
+        tableHtml += `
+                </tbody>
+            </table>`;
+        
+        $('#productListADMIN').html(tableHtml);
+    }
+    
 
 
-
+/*
+    // 검색 기능
+    $(document).on('click', '.bg-primary', function(e) {
+        if ($(this).text().trim() === '검색') {
+            e.preventDefault();
+            performSearch();
+        }
+    });
+    
+    // 검색 실행
+    function performSearch() {
+        const searchType = $('select option:selected').text();
+        const searchKeyword = $('input[type="text"]').val().trim();
+        
+        if (!searchKeyword) {
+            alert('검색어를 입력해주세요.');
+            return;
+        }
+        
+        $.ajax({
+            url: '/deskset/manager/admin_product_search',
+            method: 'POST',
+            data: {
+                searchType: searchType,
+                searchKeyword: searchKeyword
+            },
+            dataType: 'json',
+            success: function(data) {
+                updateProductTable(data);
+                // 검색 후 카테고리 체크박스 초기화
+                $('.toggle-checkbox').prop('checked', false);
+                $('.cursor-pointer')
+                    .removeClass('border-primary bg-primary text-white')
+                    .addClass('border-gray-300 text-gray-700 hover:bg-gray-100');
+            },
+            error: function() {
+                alert('검색에 실패했습니다.');
+            }
+        });
+    }
+*/
 
 
 
@@ -38,6 +211,7 @@ $(function(){
 	    });
 	});
 	
+/*	
 	//-------------카테고리체크박스---------------------------------------	
 		// 초기 상태 설정 (초기 생성된 요소용)
 	$(document).on('change', '.toggle-checkbox', function () {
@@ -64,44 +238,7 @@ $(function(){
 	    }
 	  });
 	});
-	
-/*  // 체크 시 AJAX로 데이터 요청
-  $(document).on('change', '.toggle-checkbox', function () {
-    syncCheckboxStyles();
-
-    const $checkbox = $(this);
-    const value = $checkbox.val();
-
-    if ($checkbox.is(':checked')) {
-      // AJAX 요청 (예: /get-data?value=user001)
-      $.ajax({
-        url: '/get-data',
-        method: 'GET',
-        data: { value: value },
-        dataType: 'json',
-        success: function (data) {
-          // 예: data = { name: "홍길동", age: 25 }
-          const html = `
-            <div class="p-2 border rounded bg-gray-100" data-id="${value}">
-              <p><strong>${data.name}</strong> (${data.age}세)</p>
-            </div>
-          `;
-          $('#result').append(html);
-        },
-        error: function () {
-          alert('데이터를 가져오지 못했습니다.');
-        }
-      });
-    } else {
-      // 체크 해제 시 해당 정보 제거
-      $(`#result [data-id="${value}"]`).remove();
-    }
-  });
-
-  // 초기 스타일 적용
-  $(document).ready(function () {
-    syncCheckboxStyles();
-  });*/	
+*/
 
 //-------------------------------카테고리 등록-------------------------------------------------------
 initCategoryForm();
@@ -150,41 +287,7 @@ function initCategoryForm() {
         });
     });
 }    
-/*    // 폼 제출 이벤트
-    $(document).on("submit", "#categoryForm", function(e) {
-        e.preventDefault();
-        console.log("폼 제출됨");
-        
-        // FormData 객체 생성하여 폼 데이터 수집
-        const formData = new FormData(this);
-        
-        // AJAX로 서버에 데이터 전송
-        $.ajax({
-            url: '/deskset/manager/category/register', // 실제 카테고리 등록 URL로 변경해주세요
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                alert('카테고리가 성공적으로 등록되었습니다.');
-                // 성공 후 상품 관리 페이지로 이동
-                $.ajax({
-                    url: '/deskset/manager/admin_product', // 상품 관리 페이지 URL로 변경해주세요
-                    method: 'GET',
-                    success: function(data) {
-                        $('#main-content').html(data);
-                    },
-                    error: function(error) {
-                        alert('상품 목록을 불러오는 데 실패했습니다.');
-                        console.log(error);
-                    }
-                });
-            },
-            error: function(error) {
-                alert('카테고리 등록에 실패했습니다.');
-                console.log(error);
-            }
-        });*/
+
 //-------------------------------상품 등록-------------------------------------------------------
 			//------------등록--------------
 	$(document).on('click', '.admin_proregi_btn', function(e) {

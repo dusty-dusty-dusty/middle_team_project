@@ -2,8 +2,11 @@ package com.mid.manager.service;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import com.mid.manager.model.CategoryVO;
-import com.mid.manager.model.ProductVO;
+import com.mid.manager.model.ProductCAJoinVO;
+import com.mid.manager.model.RegistProductVO;
 
 public interface AdminProductService {
 
@@ -11,7 +14,9 @@ public interface AdminProductService {
 	List<CategoryVO> getCategoryListAD();
 
 	//제품 목록 불러오기
-	List<ProductVO> getProductListAD();
+	List<ProductCAJoinVO> getProductListAD();
+
+	ResponseEntity<RegistProductVO> getcategoryATTR(String category);
 	
 
 }

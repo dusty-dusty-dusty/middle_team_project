@@ -3,12 +3,15 @@ package com.mid.manager.repo;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.http.ResponseEntity;
 
 import com.mid.manager.model.CategoryVO;
-import com.mid.manager.model.ProductVO;
+import com.mid.manager.model.ProductCAJoinVO;
+import com.mid.manager.model.RegistProductVO;
 
 @Mapper
 public interface AdminProductDAO {
-	public List<ProductVO> getProductListAD();
+	public List<ProductCAJoinVO> getProductListAD();
 	public List<CategoryVO> getCategoryListAD();
+	public ResponseEntity<RegistProductVO> getcategoryATTR(String selectedCategory);
 }
