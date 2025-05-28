@@ -41,8 +41,8 @@
         content: '';
         position: absolute;
         bottom: 0;
-        left: 80%;
-        width: 188px;
+        left: 0;
+        width: 100%;
         height: 3px;
         background-color: #00a8e8;
     }
@@ -228,36 +228,33 @@
                 <form action="/mypage/edit-profile" method="POST" class="edit-profile-form" id="editProfileForm">
                     <div class="form-group">
                         <label for="memName">회원 이름 <span class="required">*</span></label>
-                        <input type="text" id="memName" name="memName" value="${member.memName}" 
-                               placeholder="이름을 입력해주세요" required>
+                        <input type="text" id="memName" name="memName" value="${memberVO.memName}">
                     </div>
                     
                     <div class="form-group">
                         <label for="memId">아이디 <span class="required">*</span></label>
                         <div class="input-with-button">
-                            <input type="text" id="memId" name="memId" value="${member.memId}" 
-                                   placeholder="아이디를 입력해주세요" required>
+                            <input type="text" id="memId" name="memId" value="${memberVO.memId}">
+                            <button type="button" class="check-button">중복확인</button>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="memPwd">새 비밀번호</label>
-                        <input type="password" id="memPwd" name="memPwd" 
-                               placeholder="변경할 비밀번호를 입력해주세요">
+                        <label for="memPwd">새 비밀번호 <span class="required">*</span></label>
+                        <input type="password" id="memPwd" name="memPwd">
                         <div class="password-requirements">
                             <div id="lengthCheck" class="requirement">
-                                <span class="icon">❌</span> 5자 이상
+                                <span class="icon">❌</span> 8자 이상
                             </div>
-                            <div id="letterCheck" class="requirement">
-                                <span class="icon">❌</span> 영문자 대/소문자 포함
+                            <div id="specialCharCheck" class="requirement">
+                                <span class="icon">❌</span> 특수문자 2개 이상
                             </div>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="confirmPassword">새 비밀번호 확인</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" 
-                               placeholder="변경할 비밀번호를 다시 입력해주세요">
+                        <label for="confirmPassword">새 비밀번호 확인 <span class="required">*</span></label>
+                        <input type="password" id="confirmPassword" name="confirmPassword">
                         <div id="matchCheck" class="requirement">
                             <span class="icon">❌</span> 비밀번호 일치
                         </div>
@@ -265,22 +262,18 @@
                     
                     <div class="form-group">
                         <label for="memTel">휴대폰 번호 <span class="required">*</span></label>
-                        <input type="tel" id="memTel" name="memTel" value="${member.memTel}" 
-                               placeholder="휴대폰 번호를 입력해주세요" required
+                        <input type="tel" id="memTel" name="memTel" value="${memberVO.memTel}" 
                                pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}">
-                        <small class="form-text text-muted">예: 010-1234-5678</small>
                     </div>
                     
                     <div class="form-group">
                         <label for="memEmail">이메일 <span class="required">*</span></label>
-                        <input type="email" id="memEmail" name="memEmail" value="${member.memEmail}" 
-                               placeholder="이메일을 입력해주세요" required>
+                        <input type="email" id="memEmail" name="memEmail" value="${memberVO.memEmail}">
                     </div>
                     
                     <div class="form-group">
                         <label for="memAddr">주소 <span class="required">*</span></label>
-                        <input type="text" id="memAddr" name="memAddr" value="${member.memAddr}" 
-                               placeholder="주소를 입력해주세요" required>
+                        <input type="text" id="memAddr" name="memAddr" value="${memberVO.memAddr}">
                     </div>
                     
                     <div class="button-group">
@@ -295,10 +288,26 @@
     <script>
     function validatePassword(password) {
         const checks = {
-            length: password.length >= 5,
-            letter: /[A-Za-z]/.test(password)
+            length: password.length >= 8,
+            specialChar: (password.match(/[!@#$%^&*(),.?":{}|<>]/g) || []).length >= 2
         };
         return checks;
+    }
+
+    // SweetAlert2로 입력값 미입력 시 알림 및 포커스 이동 함수
+    function showInputAlert(message, fieldId, title = '필수 입력', icon = 'warning') {
+        Swal.fire({
+            title: title,
+            text: message,
+            icon: icon,
+            confirmButtonText: '확인',
+            confirmButtonColor: '#00a8e8'
+        }).then(() => {
+            if (fieldId) {
+                const el = document.getElementById(fieldId);
+                if (el) el.focus({ preventScroll: true });
+            }
+        });
     }
 
     document.getElementById('memPwd').addEventListener('input', function() {
@@ -317,16 +326,16 @@
             lengthCheck.classList.remove('valid');
         }
         
-        // 영문자 체크
-        const letterCheck = document.getElementById('letterCheck');
-        if (validations.letter) {
-            letterCheck.querySelector('.icon').textContent = '✓';
-            letterCheck.classList.add('valid');
-            letterCheck.classList.remove('invalid');
+        // 특수문자 체크
+        const specialCharCheck = document.getElementById('specialCharCheck');
+        if (validations.specialChar) {
+            specialCharCheck.querySelector('.icon').textContent = '✓';
+            specialCharCheck.classList.add('valid');
+            specialCharCheck.classList.remove('invalid');
         } else {
-            letterCheck.querySelector('.icon').textContent = '❌';
-            letterCheck.classList.add('invalid');
-            letterCheck.classList.remove('valid');
+            specialCharCheck.querySelector('.icon').textContent = '❌';
+            specialCharCheck.classList.add('invalid');
+            specialCharCheck.classList.remove('valid');
         }
         
         // 비밀번호 확인 체크
@@ -355,41 +364,15 @@
         }
     }
 
+    // 폼 유효성 검사
     document.getElementById('editProfileForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        const password = document.getElementById('memPwd').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        
-        if (password) {
-            const validations = validatePassword(password);
-            if (!validations.length || !validations.letter) {
-                Swal.fire({
-                    title: '비밀번호 오류',
-                    text: '비밀번호는 5자 이상이며 영문자를 포함해야 합니다.',
-                    icon: 'error',
-                    confirmButtonText: '확인',
-                    confirmButtonColor: '#00a8e8'
-                });
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                Swal.fire({
-                    title: '비밀번호 불일치',
-                    text: '비밀번호가 일치하지 않습니다.',
-                    icon: 'error',
-                    confirmButtonText: '확인',
-                    confirmButtonColor: '#00a8e8'
-                });
-                return;
-            }
-        }
         
         // 필수 필드 검사
         const requiredFields = {
             'memName': '이름을 입력해주세요',
             'memId': '아이디를 입력해주세요',
+            'memPwd': '비밀번호를 입력해주세요',
             'memTel': '휴대폰 번호를 입력해주세요',
             'memEmail': '이메일을 입력해주세요',
             'memAddr': '주소를 입력해주세요'
@@ -398,14 +381,28 @@
         for (const [fieldId, message] of Object.entries(requiredFields)) {
             const field = document.getElementById(fieldId);
             if (!field.value.trim()) {
-                field.focus();
-                Swal.fire({
-                    title: '필수 입력',
-                    text: message,
-                    icon: 'warning',
-                    confirmButtonText: '확인',
-                    confirmButtonColor: '#00a8e8'
-                });
+                showInputAlert(message, fieldId);
+                return;
+            }
+        }
+
+        const password = document.getElementById('memPwd').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (password) {
+            const validations = validatePassword(password);
+            if (!validations.length && !validations.specialChar) {
+                showInputAlert('비밀번호는 8자 이상이고 특수문자를 2개 이상 포함해야 합니다.', 'memPwd', '비밀번호 오류', 'error');
+                return;
+            } else if (!validations.length) {
+                showInputAlert('비밀번호는 8자 이상이어야 합니다.', 'memPwd', '비밀번호 오류', 'error');
+                return;
+            } else if (!validations.specialChar) {
+                showInputAlert('비밀번호는 특수문자를 2개 이상 포함해야 합니다.', 'memPwd', '비밀번호 오류', 'error');
+                return;
+            }
+            if (password !== confirmPassword) {
+                showInputAlert('비밀번호가 일치하지 않습니다.', 'confirmPassword', '비밀번호 불일치', 'error');
                 return;
             }
         }
@@ -414,28 +411,15 @@
         const telPattern = /^[0-9]{3}-[0-9]{4}-[0-9]{4}$/;
         const telField = document.getElementById('memTel');
         if (!telPattern.test(telField.value)) {
-            telField.focus();
-            Swal.fire({
-                title: '형식 오류',
-                text: '휴대폰 번호를 올바른 형식으로 입력해주세요. (예: 010-1234-5678)',
-                icon: 'warning',
-                confirmButtonText: '확인',
-                confirmButtonColor: '#00a8e8'
-            });
+            showInputAlert('휴대폰 번호를 올바른 형식으로 입력해주세요. (예: 010-1234-5678)', 'memTel', '형식 오류', 'warning');
             return;
         }
         
         // 이메일 형식 검사
         const emailField = document.getElementById('memEmail');
-        if (!emailField.value.includes('@')) {
-            emailField.focus();
-            Swal.fire({
-                title: '형식 오류',
-                text: '올바른 이메일 주소를 입력해주세요.',
-                icon: 'warning',
-                confirmButtonText: '확인',
-                confirmButtonColor: '#00a8e8'
-            });
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(emailField.value)) {
+            showInputAlert('올바른 이메일 주소를 입력해주세요.', 'memEmail', '형식 오류', 'warning');
             return;
         }
 
@@ -451,9 +435,88 @@
             cancelButtonColor: '#6c757d'
         }).then((result) => {
             if (result.isConfirmed) {
-                this.submit();
+                // AJAX로 폼 데이터 전송
+                const formData = new FormData(this);
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: '수정 완료',
+                            text: '개인정보가 성공적으로 수정되었습니다.',
+                            icon: 'success',
+                            confirmButtonText: '확인',
+                            confirmButtonColor: '#00a8e8'
+                        }).then(() => {
+                            window.location.href = '/deskset/mypage/check-profile';
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '수정 실패',
+                            text: data.message || '수정에 실패했습니다.',
+                            icon: 'error',
+                            confirmButtonText: '확인',
+                            confirmButtonColor: '#00a8e8'
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: '오류',
+                        text: '수정 중 오류가 발생했습니다.',
+                        icon: 'error',
+                        confirmButtonText: '확인',
+                        confirmButtonColor: '#00a8e8'
+                    });
+                });
             }
         });
+    });
+
+    // 중복확인 버튼 클릭 이벤트
+    document.querySelector('.check-button').addEventListener('click', function() {
+        const memId = document.getElementById('memId').value.trim();
+        if (!memId) {
+            showInputAlert('아이디를 입력해주세요', 'memId');
+            return;
+        }
+        
+        // 서버에 중복 확인 요청
+        fetch('/mypage/check-id?memId=' + memId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+        .then(response => response.json())
+        .then(available => {
+            if (available) {
+                showInputAlert('사용 가능한 아이디입니다.', null, '사용 가능', 'success');
+            } else {
+                showInputAlert('이미 사용 중인 아이디입니다.', 'memId', '중복', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showInputAlert('서버 오류가 발생했습니다. 다시 시도해주세요.', null, '오류', 'error');
+        });
+    });
+
+    // 휴대폰 번호 입력 시 자동 하이픈
+    document.getElementById('memTel').addEventListener('input', function(e) {
+        let value = this.value.replace(/[^0-9]/g, '');
+        let result = '';
+        if (value.length < 4) {
+            result = value;
+        } else if (value.length < 8) {
+            result = value.substr(0, 3) + '-' + value.substr(3);
+        } else {
+            result = value.substr(0, 3) + '-' + value.substr(3, 4) + '-' + value.substr(7, 4);
+        }
+        this.value = result;
     });
     </script>
 

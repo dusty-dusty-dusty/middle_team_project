@@ -229,6 +229,24 @@
         font-size: 20px;
         font-weight: bold;
     }
+    
+    .page-title {
+        margin-bottom: 30px;
+        font-size: 28px;
+        color: #333;
+        font-weight: 600;
+        position: relative;
+        padding-bottom: 15px;
+    }
+    .page-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #00a8e8;
+    }
     </style>
 </head>
 <body>
@@ -240,7 +258,7 @@
         <jsp:include page="./mypage-sidebar.jsp" />
 
         <div class="main-content">
-            <h2>장바구니</h2>
+            <h2 class="page-title">장바구니</h2>
 
             <!-- form 시작 -->
             <form action="basketAction.do" method="post">
@@ -394,6 +412,14 @@
                 url.searchParams.set('page', page);
                 window.history.pushState({}, '', url);
             });
+        });
+
+        // Enter 키로 폼 submit(선택삭제) 방지
+        const basketForm = document.querySelector('form[action="basketAction.do"]');
+        basketForm.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
         });
     });
     </script>

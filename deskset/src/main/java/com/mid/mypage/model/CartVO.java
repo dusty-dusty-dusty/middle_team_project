@@ -14,4 +14,4 @@ public class CartVO {
     private String productName;     // 상품명 - 장바구니 화면에 표시할 상품 이름
     private int productPrice;       // 상품 가격 - 장바구니 화면에 표시할 상품 단가
     private String productThum;     // 상품 썸네일 이미지 - 장바구니 목록에 표시되는 작은 이미지
-} 
+}

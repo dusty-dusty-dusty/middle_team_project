@@ -13,112 +13,90 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.mid.mypage.model.CartVO;
 import com.mid.mypage.model.OrderVO;
-import com.mid.mypage.repo.CartDAO;
 import com.mid.mypage.repo.OrderDAO;
 
 @Controller
-@RequestMapping("/mypage/order")
+@RequestMapping({"/mypage", "/deskset/mypage"})
 public class OrderController {
 
     @Autowired
     private OrderDAO orderDAO;
-    
-    @Autowired
-    private CartDAO cartDAO;
-    
+
     @GetMapping("/checkout")
     public String checkoutForm(
             @RequestParam(value = "cartIds", required = false) List<String> cartIds,
-            HttpSession session, 
+            HttpSession session,
             Model model) {
-        
-        // 테스트를 위해 고정된 회원번호 사용
-        String memNo = "M001";
-        
-        // 선택된 장바구니 항목이 없는 경우
+
         if (cartIds == null || cartIds.isEmpty()) {
             return "redirect:/mypage/basket";
         }
-        
-        // 선택한 장바구니 항목 조회 로직 
-        List<CartVO> selectedItems = new ArrayList<>();
-        for (String cartId : cartIds) {
-            CartVO cartItem = cartDAO.getCartById(cartId);
-            if (cartItem != null) {
-                selectedItems.add(cartItem);
-            }
-        }
-        
-        // 결제 정보를 모델에 추가
+
+        // CartVO ���떊 鍮� 臾몄옄�뿴 由ъ뒪�듃濡� ��泥�
+        List<String> selectedItems = new ArrayList<>();
         model.addAttribute("cartIds", cartIds);
         model.addAttribute("selectedItems", selectedItems);
-        
+
         return "mypage/order/checkout";
     }
-    
+
     @PostMapping("/place")
     public String placeOrder(
             @RequestParam("cartIds") List<String> cartIds,
             @RequestParam("paymentMethod") String paymentMethod,
-            HttpSession session, 
+            HttpSession session,
             RedirectAttributes redirectAttributes) {
-        
-        // 테스트를 위해 고정된 회원번호 사용
-        String memNo = "M001";
-        
-        try {
-            // 주문번호 생성 (실제로는 더 안전한 방식 사용 필요)
-            String orderNo = "ORD" + UUID.randomUUID().toString().substring(0, 10);
-            
-            // 결제번호 생성 (실제로는 결제 시스템에서 생성)
-            String payNo = "PAY" + UUID.randomUUID().toString().substring(0, 10);
-            
-            // 주문 객체 생성
-            OrderVO order = new OrderVO();
-            order.setOrderNo(orderNo);
-            order.setMemNo(memNo);
-            order.setPayNo(payNo);
-            order.setOrderDate(new Date());
-            order.setDeliveryFee(3000);  // 기본 배송비
-            order.setOrderStatus("주문완료");
-            
-            // 주문 저장
-            orderDAO.insertOrder(order);
-            
-            // 주문 완료 후 장바구니 아이템 삭제
-            for (String cartId : cartIds) {
-                cartDAO.deleteCartById(cartId);
-            }
-            
-            redirectAttributes.addFlashAttribute("message", "주문이 성공적으로 완료되었습니다.");
-            return "redirect:/mypage/orders";
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "주문 처리 중 오류가 발생했습니다.");
-            return "redirect:/mypage/order/checkout?cartIds=" + String.join(",", cartIds);
-        }
+
+        String orderNo = "ORD" + UUID.randomUUID().toString().substring(0, 10);
+        redirectAttributes.addFlashAttribute("message",
+            "二쇰Ц�씠 �꽦怨듭쟻�쑝濡� �셿猷뚮릺�뿀�뒿�땲�떎. (�뜑誘� 二쇰Ц踰덊샇: " + orderNo + ")");
+        return "redirect:/mypage/orders";
     }
-    
+
     @GetMapping("/detail/{orderNo}")
-    public String orderDetail(@PathVariable("orderNo") String orderNo, Model model) {
-        OrderVO order = orderDAO.getOrder(orderNo);
-        
-        if (order == null) {
-            return "redirect:/mypage/orders";
-        }
-        
+    public String orderDetail(
+            @PathVariable("orderNo") String orderNo,
+            Model model) {
+
+        OrderVO order = new OrderVO();
+        order.setOrderNo(orderNo);
+        order.setMemNo("M001");
+        order.setOrderDate(new Date());
+        order.setOrderStatus("二쇰Ц�셿猷�(�뜑誘�)");
+
         model.addAttribute("order", order);
         return "mypage/order/detail";
     }
-    
+
     @GetMapping("/list")
     public String getOrderList(Model model) {
-        String memNo = "M001"; // 테스트용 회원번호
-        List<OrderVO> orderList = orderDAO.getOrderList(memNo);
+        List<OrderVO> orderList = new ArrayList<>();
         model.addAttribute("orderList", orderList);
         return "mypage/order/list";
     }
-} 
+
+    @GetMapping("/orders")
+    public String orders(HttpSession session, Model model) {
+        System.out.println("====================[DEBUG] orders() 吏꾩엯====================");
+        String memNo = "MEM000001";
+        System.out.println("[DEBUG] Using memNo: " + memNo);
+        List<OrderVO> orderList = orderDAO.getOrderList(memNo);
+        System.out.println("[DEBUG] orderList size: " + (orderList != null ? orderList.size() : -1));
+        if (orderList != null && !orderList.isEmpty()) {
+            for (OrderVO order : orderList) {
+                System.out.println("[DEBUG] order: " + order);
+            }
+        } else {
+            System.out.println("[DEBUG] orderList is empty or null");
+        }
+        model.addAttribute("orderList", orderList);
+        System.out.println("====================[DEBUG] orders() 醫낅즺====================");
+        return "mypage/orders";
+    }
+
+    @GetMapping({"/mypage", "/deskset/mypage", "/mypage/", "/deskset/mypage/"})
+    public String mypageRoot() {
+        return "redirect:/mypage/order/orders";
+    }
+}
