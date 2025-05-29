@@ -5,45 +5,47 @@
 <mapper namespace="com.mid.mypage.repo.OrderDAO">
 
   <select id="getOrderList" parameterType="string" resultType="com.mid.mypage.model.OrderVO">
-    SELECT
-      o.ORDER_NO as orderNo,
-      o.MEM_NO as memNo,
-      o.ORDER_DATE as orderDate,
-      o.TOTAL_AMOUNT as totalAmount,
-      o.ORDER_STATUS as orderStatus,
-      o.PAY_NO as paymentMethod,
-      p.PRODUCT_NAME as productName,
-      p.PRODUCT_PRICE as productPrice
-    FROM
+    SELECT 
+      o.order_no as orderNo,               -- 주문번호
+      p.product_name as productName,       -- 상품명
+      o.order_status as orderStatus,       -- 주문현황
+      o.order_date as orderDate,           -- 주문일자
+      p.product_price as productPrice      -- 상품금액
+    FROM 
       ORDERS o
-      JOIN ORDERS_DETAIL od ON o.ORDER_NO = od.ORDER_NO
-      JOIN PRODUCT p ON od.PRODUCT_NO = p.PRODUCT_NO
+    JOIN 
+      ORDERS_DETAIL od ON o.order_no = od.order_no
+    JOIN 
+      PRODUCT p ON od.product_no = p.product_no
     WHERE
-      o.MEM_NO = #{memNo}
-    ORDER BY
-      o.ORDER_DATE DESC, o.ORDER_NO DESC
+      o.mem_no = #{memNo}
+    ORDER BY 
+      o.order_date DESC
   </select>
 
   <select id="getOrderListByMemberId" parameterType="string" resultType="com.mid.mypage.model.OrderVO">
     SELECT
       o.ORDER_NO as orderNo,
-      o.MEM_NO as memNo,
-      o.ORDER_DATE as orderDate,
-      o.TOTAL_AMOUNT as totalAmount,
       o.ORDER_STATUS as orderStatus,
-      o.DELIVERY_ADDRESS as deliveryAddress,
-      o.PAY_NO as paymentMethod,
-      p.PRODUCT_NAME as productName,
-      p.PRODUCT_PRICE as productPrice
+      o.ORDER_DATE as orderDate
     FROM
       ORDERS o
-      JOIN ORDERS_DETAIL od ON o.ORDER_NO = od.ORDER_NO
-      JOIN PRODUCT p ON od.PRODUCT_NO = p.PRODUCT_NO
-      JOIN MEMBER m ON o.MEM_NO = m.MEM_NO
     WHERE
-      m.MEM_ID = #{memId}
+      o.MEM_NO = (SELECT MEM_NO FROM MEMBER WHERE MEM_ID = #{memId})
     ORDER BY
-      o.ORDER_DATE DESC, o.ORDER_NO DESC
+      o.ORDER_DATE DESC
+  </select>
+
+  <!-- 주문 목록 조회를 위한 로깅 쿼리 -->
+  <select id="checkOrderData" parameterType="string" resultType="map">
+    SELECT 
+      (SELECT COUNT(*) FROM ORDERS) as totalOrders,
+      (SELECT COUNT(*) FROM MEMBER WHERE MEM_ID = #{memId}) as memberCount,
+      (SELECT MEM_NO FROM MEMBER WHERE MEM_ID = #{memId}) as memNo,
+      (SELECT COUNT(*) FROM ORDERS WHERE MEM_NO = (SELECT MEM_NO FROM MEMBER WHERE MEM_ID = #{memId})) as memberOrderCount,
+      (SELECT COUNT(*) FROM ORDERS_DETAIL) as totalOrderDetails,
+      (SELECT COUNT(*) FROM PRODUCT) as totalProducts
+    FROM DUAL
   </select>
 
 </mapper>

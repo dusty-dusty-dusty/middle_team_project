@@ -268,7 +268,7 @@
                     
                     <div class="form-group">
                         <label for="memEmail">이메일 <span class="required">*</span></label>
-                        <input type="email" id="memEmail" name="memEmail" value="${memberVO.memEmail}">
+                        <input type="text" id="memEmail" name="memEmail" value="${memberVO.memEmail}">
                     </div>
                     
                     <div class="form-group">
@@ -415,7 +415,7 @@
             return;
         }
         
-        // 이메일 형식 검사
+        // 이메일 형식 검사 (SweetAlert2로 통일)
         const emailField = document.getElementById('memEmail');
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(emailField.value)) {

@@ -2,8 +2,26 @@
 <!DOCTYPE mapper PUBLIC
   "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.mid.mypage.mapper.CartMapper">
+<mapper namespace="com.mid.mypage.mappers.CartMapper">
 
-
+    <!-- 장바구니 목록 조회 -->
+    <select id="getCartList" resultType="com.mid.mypage.model.CartVO">
+        SELECT
+            c.cart_id        AS cartId,         -- 장바구니 ID
+            c.mem_no         AS memNo,          -- 회원 번호
+            c.product_no     AS productNo,      -- 상품 번호
+            c.cart_quantity  AS cartQuantity,   -- 수량
+            p.product_name   AS productName,    -- 상품명
+            p.product_price  AS productPrice,   -- 단가
+            p.product_thum   AS productThum     -- 썸네일 이미지
+        FROM
+            CART c
+        JOIN
+            PRODUCT p ON c.product_no = p.product_no
+        WHERE
+            c.mem_no = #{memNo}
+        ORDER BY
+            c.cart_id DESC
+    </select>
 
 </mapper>

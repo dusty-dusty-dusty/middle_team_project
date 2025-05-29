@@ -127,5 +127,5 @@
     background-color: #333;
     border-radius: 50%;
 }
-</style> 
+</style>
 <!-- 사이드바 끝 -->

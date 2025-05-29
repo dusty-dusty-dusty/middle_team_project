@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 
 @Controller
 @RequestMapping("/user")
@@ -29,19 +30,22 @@ public class UserController {
 	public String login(@RequestParam("memId") String memId,
 	                    @RequestParam("memPwd") String memPwd,
 	                    HttpServletRequest request, Model model) {
-	    UserInfoVO userInfo = userDAO.getUserInfo(memId, memPwd); 
-	    System.out.println("입력 비밀번호: " + memPwd);
-	    System.out.println("DB 비밀번호: " + (userInfo != null ? userInfo.getMemPwd() : "null"));
-	    if (userInfo != null && memPwd.equals(userInfo.getMemPwd())) {
-	        HttpSession session = request.getSession();
-	        session.setAttribute("loggedInUser", userInfo);
-	        model.addAttribute("userName", userInfo.getMemName());
-	        model.addAttribute("loginSuccess", "true");
-	        return "login/login_success_start"; // 濡쒓렇�씤 �꽦怨� �떆 諛붾줈 login_success_start.jsp濡� �씠�룞
-	    } else {
-	        request.setAttribute("loginError", "아이디 또는 비밀번호가 올바르지 않습니다.");
-	        return "login/login";
-	    }
+	    // 임시 회원번호 MEM000001 사용
+	    UserInfoVO userInfo = new UserInfoVO();
+	    userInfo.setMemNo("MEM000001");
+	    userInfo.setMemId(memId);
+	    userInfo.setMemPwd(memPwd);
+	    userInfo.setMemName("임시회원");
+	    userInfo.setMemEmail("temp@example.com");
+	    userInfo.setMemAddr("임시주소");
+	    userInfo.setMemTel("010-0000-0000");
+	    userInfo.setMemRegdate(new Date());
+	    
+	    HttpSession session = request.getSession();
+	    session.setAttribute("loggedInUser", userInfo);
+	    model.addAttribute("userName", userInfo.getMemName());
+	    model.addAttribute("loginSuccess", "true");
+	    return "login/login_success_start";
 	}
 
 	@GetMapping("/register")

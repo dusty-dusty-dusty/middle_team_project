@@ -11,16 +11,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping({"/mypage", "/deskset/mypage"})
+@RequestMapping("/mypage")
 public class MypageController {
     private static final String TEST_MEMBER_ID = "hong123";
 
-    @GetMapping("")
+    @GetMapping({"", "/"})
     public String myPage(HttpSession session) {
         if (session.getAttribute("memId") == null) {
             session.setAttribute("memId", TEST_MEMBER_ID);
         }
-        return "redirect:/deskset/mypage/orders";
+        return "redirect:/mypage/orders";
     }
 
     @GetMapping("/basket")
@@ -74,7 +74,7 @@ public class MypageController {
     public String basketAction(@RequestParam("action") String action,
                                @RequestParam(value = "selectedItems", required = false) List<String> selectedItems) {
         if ("order".equals(action) && selectedItems != null && !selectedItems.isEmpty()) {
-            return "redirect:/order/checkout?cartIds=" + String.join(",", selectedItems);
+            return "redirect:/mypage/order/checkout?cartIds=" + String.join(",", selectedItems);
         }
         return "redirect:/mypage/basket";
     }

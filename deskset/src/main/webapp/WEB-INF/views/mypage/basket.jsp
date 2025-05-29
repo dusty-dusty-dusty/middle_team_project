@@ -270,44 +270,34 @@
                     </div>
                 </div>
 
-                <div class="basket-list">
-                    <!-- 더미 데이터 2개 -->
-                    <div class="basket-item">
-                        <div class="item-checkbox">
-                            <input type="checkbox" class="item-select" name="selectedItems" value="1" data-price="189000" />
-                        </div>
-                        <div class="product-info">
-                            <img src="https://via.placeholder.com/100x100" alt="기계식 키보드" class="product-thumb" />
-                            <div class="product-details">
-                                <h3>기계식 키보드 K1</h3>
-                                <p class="price">189,000원</p>
-                                <div class="quantity-control">
-                                    <button type="button" class="decrease">-</button>
-                                    <input type="number" value="1" min="1" max="99" class="quantity-input" />
-                                    <button type="button" class="increase">+</button>
+                <c:choose>
+                    <c:when test="${empty cartList}">
+                        <div class="empty-cart-message">장바구니가 비어 있습니다.</div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="basket-list">
+                            <c:forEach items="${cartList}" var="cart">
+                                <div class="basket-item">
+                                    <div class="item-checkbox">
+                                        <input type="checkbox" class="item-select" name="selectedItems" value="${cart.cartId}" data-price="${cart.productPrice}" />
+                                    </div>
+                                    <div class="product-info">
+                                        <img src="${cart.productThum}" alt="${cart.productName}" class="product-thumb" />
+                                        <div class="product-details">
+                                            <h3>${cart.productName}</h3>
+                                            <p class="price">${cart.productPrice}원</p>
+                                            <div class="quantity-control">
+                                                <button type="button" class="decrease">-</button>
+                                                <input type="number" value="${cart.cartQuantity}" min="1" max="99" class="quantity-input" />
+                                                <button type="button" class="increase">+</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </c:forEach>
                         </div>
-                    </div>
-
-                    <div class="basket-item">
-                        <div class="item-checkbox">
-                            <input type="checkbox" class="item-select" name="selectedItems" value="2" data-price="99000" />
-                        </div>
-                        <div class="product-info">
-                            <img src="https://via.placeholder.com/100x100" alt="게이밍 마우스" class="product-thumb" />
-                            <div class="product-details">
-                                <h3>게이밍 마우스 M1</h3>
-                                <p class="price">99,000원</p>
-                                <div class="quantity-control">
-                                    <button type="button" class="decrease">-</button>
-                                    <input type="number" value="1" min="1" max="99" class="quantity-input" />
-                                    <button type="button" class="increase">+</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    </c:otherwise>
+                </c:choose>
 
                 <!-- 페이지네이션 -->
                 <div class="pagination">
