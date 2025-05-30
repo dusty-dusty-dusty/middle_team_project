@@ -60,7 +60,7 @@ public class AdminProductController {
 	}
 	
 	//상품이미지 등록
-	@PostMapping("/imgupload")
+	@PostMapping("/imguploadT")
     @ResponseBody
     public Map<String, Object> uploadFile(MultipartFile file, HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
@@ -68,7 +68,7 @@ public class AdminProductController {
         if (file != null && !file.isEmpty()) {
             try {
                 // 서버에 저장할 경로 설정
-                String uploadPath = request.getServletContext().getRealPath("/resources/images/product_exp/");
+                String uploadPath = request.getServletContext().getRealPath("/resources/images/thumb/");
                 
                 // 폴더 없으면 생성
                 File folder = new File(uploadPath);
@@ -89,7 +89,7 @@ public class AdminProductController {
                 ImgUploadVO imgUploadVO = new ImgUploadVO();
                 imgUploadVO.setOriginalName(originalName);
                 imgUploadVO.setSavedName(savedName);
-                imgUploadVO.setUploadPath("/resources/upload/" + savedName);
+                imgUploadVO.setUploadPath("/resources/images/thumb/" + savedName);
 
                 // 성공 응답
                 result.put("result", "success");
