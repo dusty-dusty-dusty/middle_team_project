@@ -19,8 +19,8 @@
         </li>
         <!-- 장바구니 메뉴 아이템 - 사용자의 장바구니 페이지로 연결 -->
         <li>
-            <a href="<c:url value='/mypage/basket'/>" 
-               class="${fn:endsWith(currentPage, '/basket.jsp') ? 'active' : ''}">
+            <a href="<c:url value='/mypage/cart'/>" 
+               class="${fn:endsWith(currentPage, '/cart.jsp') ? 'active' : ''}">
                장바구니
             </a>
         </li>

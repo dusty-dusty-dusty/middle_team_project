@@ -1,57 +1,89 @@
 package com.mid.mypage.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mid.mypage.model.MemberVO;
+import com.mid.mypage.service.MemberService;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
-@RequestMapping({"/mypage/profile", "/deskset/mypage/profile"})
+@RequestMapping("/mypage/profile")
 public class ProfileController {
 
-    @GetMapping("")
-    public String viewProfile(HttpSession session, Model model) {
-        // 세션에서 memId 가져오기 (더미)
-        String memId = (String) session.getAttribute("memId");
-        
-        // 더미 MemberVO 생성
-        MemberVO member = new MemberVO();
-        member.setMemId(memId != null ? memId : "dummyUser");
-        member.setMemName("홍길동");
-        member.setMemEmail("hong@example.com");
-        member.setMemPwd("password123");
-        
-        model.addAttribute("member", member);
-        return "mypage/profile";
+    @Autowired
+    private MemberService memberService;
+
+    @GetMapping("/check-profile")
+    public String checkProfile(HttpSession session, Model model) {
+        if (session.getAttribute("memNo") == null) {
+            session.setAttribute("memNo", "MEM000001");
+        }
+        String memNo = (String) session.getAttribute("memNo");
+        System.out.println("==== [DEBUG] check-profile: memNo = " + memNo);
+        MemberVO member = memberService.getMemberByNo(memNo);
+        System.out.println("==== [DEBUG] check-profile: member = " + member);
+        model.addAttribute("memberVO", member);
+        return "mypage/check-profile";
     }
 
-    @GetMapping("/edit")
+    @GetMapping("/edit-profile")
     public String editProfileForm(HttpSession session, Model model) {
-        // 세션에서 memId 가져오기 (더미)
-        String memId = (String) session.getAttribute("memId");
-        
-        // 더미 MemberVO 생성
-        MemberVO member = new MemberVO();
-        member.setMemId(memId != null ? memId : "dummyUser");
-        member.setMemName("홍길동");
-        member.setMemEmail("hong@example.com");
-        member.setMemPwd("password123");
-        
-        model.addAttribute("member", member);
+        if (session.getAttribute("memNo") == null) {
+            session.setAttribute("memNo", "MEM000001");
+        }
+        String memNo = (String) session.getAttribute("memNo");
+        System.out.println("==== [DEBUG] edit-profile: memNo = " + memNo);
+        MemberVO member = memberService.getMemberByNo(memNo);
+        System.out.println("==== [DEBUG] edit-profile: member = " + member);
+        model.addAttribute("memberVO", member);
         return "mypage/edit-profile";
     }
 
-    @PostMapping("/edit")
-    public String updateProfile(@ModelAttribute MemberVO member,
-                                HttpSession session,
-                                RedirectAttributes rttr) {
-        // DB 업데이트 로직 제거 → 무조건 성공 메시지
-        rttr.addFlashAttribute("message", "프로필이 성공적으로 수정되었습니다. (더미)");
-        return "redirect:/mypage/profile";
+    @PostMapping("/edit-profile")
+    @ResponseBody
+    public Map<String, Object> updateProfile(
+            @ModelAttribute MemberVO memberVO,
+            @RequestParam(value = "confirmPassword", required = false) String confirmPassword,
+            HttpSession session) {
+        if (session.getAttribute("memNo") == null) {
+            session.setAttribute("memNo", "MEM000001");
+        }
+        String memNo = (String) session.getAttribute("memNo");
+        System.out.println("==== [DEBUG] update-profile: memNo = " + memNo);
+        System.out.println("==== [DEBUG] update-profile: memberVO(before set) = " + memberVO);
+        memberVO.setMemNo(memNo);
+        System.out.println("==== [DEBUG] update-profile: memberVO(after set) = " + memberVO);
+        Map<String, Object> result = new HashMap<>();
+        String pwd = memberVO.getMemPwd();
+        if (pwd == null || pwd.trim().isEmpty() || confirmPassword == null || confirmPassword.trim().isEmpty()) {
+            result.put("success", false);
+            result.put("message", "회원정보를 수정하려면 새 비밀번호와 확인을 모두 입력해야 합니다.");
+            return result;
+        }
+        if (!pwd.equals(confirmPassword)) {
+            result.put("success", false);
+            result.put("message", "비밀번호가 일치하지 않습니다.");
+            return result;
+        }
+        try {
+            int updateResult = memberService.updateMember(memberVO);
+            System.out.println("==== [DEBUG] update-profile: updateResult = " + updateResult);
+            result.put("success", updateResult > 0);
+            if (updateResult == 0) {
+                result.put("message", "수정할 정보가 없습니다.");
+            }
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "수정 실패: " + e.getMessage());
+        }
+        return result;
     }
 
     @PostMapping("/password")
@@ -69,31 +101,6 @@ public class ProfileController {
 
         // 비밀번호 변경 로직 제거 → 무조건 성공
         return "success";
-    }
-
-    @GetMapping("edit-profile")
-    public String editProfileForm() {
-        return "mypage/edit-profile";
-    }
-
-    @GetMapping("check-profile")
-    public String checkProfile() {
-        return "mypage/check-profile";
-    }
-
-    @PostMapping("edit-profile")
-    @ResponseBody
-    public java.util.Map<String, Object> updateProfile(@ModelAttribute com.mid.mypage.model.MemberVO memberVO) {
-        java.util.Map<String, Object> result = new java.util.HashMap<>();
-        try {
-            // TODO: 실제 DB 업데이트 로직 추가
-            // 예시: memberService.update(memberVO);
-            result.put("success", true);
-        } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", "수정 실패: " + e.getMessage());
-        }
-        return result;
     }
 
     @PostMapping("/change-password")

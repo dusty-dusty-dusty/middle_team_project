@@ -63,17 +63,23 @@
 
     .form-group input {
         width: 100%;
-        max-width: 100%;
         padding: 12px 15px;
-        border: 1px solid #eaeaea;
+        border: 1px solid #ddd;
         border-radius: 6px;
-        background-color: #f9f9f9;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
         font-size: 16px;
+        transition: all 0.3s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        background-color: #fff;
         color: #555;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .form-group input:focus {
+        border-color: #00a8e8;
+        box-shadow: 0 0 0 3px rgba(0,168,232,0.2);
+        outline: none;
     }
 
     .button-group {
@@ -138,35 +144,35 @@
                     <div class="form-group">
                         <label for="name">회원 이름</label>
                         <div class="profile-data">
-                            <input type="text" id="name" value="${user.memName}" readonly class="form-control">
+                            <input type="text" id="name" value="${memberVO.memName}" readonly class="form-control">
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="userId">아이디</label>
                         <div class="profile-data">
-                            <input type="text" id="userId" value="${user.memId}" readonly class="form-control">
+                            <input type="text" id="userId" value="${memberVO.memId}" readonly class="form-control">
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="email">이메일</label>
                         <div class="profile-data">
-                            <input type="email" id="email" value="${user.memEmail}" readonly class="form-control">
+                            <input type="email" id="email" value="${memberVO.memEmail}" readonly class="form-control">
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="phone">휴대폰 번호</label>
                         <div class="profile-data">
-                            <input type="tel" id="phone" value="${user.memTel}" readonly class="form-control">
+                            <input type="tel" id="phone" value="${memberVO.memTel}" readonly class="form-control">
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label for="address">주소</label>
                         <div class="profile-data">
-                            <input type="text" id="address" value="${user.memAddr}" readonly class="form-control">
+                            <input type="text" id="address" value="${memberVO.memAddr}" readonly class="form-control">
                         </div>
                     </div>
                     

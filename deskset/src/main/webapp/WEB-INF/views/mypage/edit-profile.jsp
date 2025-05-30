@@ -73,14 +73,15 @@
     .form-group input {
         width: 100%;
         padding: 12px 15px;
-        border: 1px solid #ddd;
+        border: 1px solid #eaeaea;
         border-radius: 6px;
+        background-color: #f9f9f9;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
         font-size: 16px;
-        transition: all 0.3s;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        color: #555;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
     }
     
     .form-group input:focus {
@@ -89,45 +90,13 @@
         outline: none;
     }
 
-    /* 아이디 입력창과 중복확인 버튼을 감싸는 컨테이너 */
-    /* 너비를 조절하여 다른 텍스트박스와 오른쪽 끝을 맞출 수 있음 (예: 400px ~ 490px) */
-    .input-with-button {
-        position: relative;
-        width: 107%; /* 이 값을 조절하여 전체 너비 변경 (작게 하려면 값 감소, 크게 하려면 값 증가) */
-    }
-
-    /* 아이디 입력창 스타일 */
-    .input-with-button input {
-        width: 100%;
-        padding-right: 110px; /* 이 값을 조절하여 텍스트와 버튼 사이 간격 조정 (작게 하면 텍스트 영역 증가) */
-        border-radius: 6px;
-    }
-
-    /* 중복확인 버튼 스타일 */
-    .check-button {
-        position: absolute;
-        right: 5px;
-        top: 2px;
-        width: 100px; /* 버튼 너비 */
-        height: 42px;
-        background-color: #00a8e8;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        white-space: nowrap;
-        display: flex;
-        align-items: center; /* 텍스트 수직 가운데 정렬 */
-        justify-content: center;
+    /* 아이디 input만 더 진하게 */
+    .id-strong {
+        background-color: #eceff3 !important;
+        border: 1.5px solid #ccc !important;
+        color: #888 !important;
         font-weight: 500;
-        font-size: 15px;
-        transition: all 0.2s;
-    }
-    
-    .check-button:hover {
-        background-color: #0091c8;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 5px rgba(0,168,232,0.4);
+        cursor: not-allowed;
     }
 
     .button-group {
@@ -227,16 +196,13 @@
             <div class="edit-profile-container">
                 <form action="/mypage/edit-profile" method="POST" class="edit-profile-form" id="editProfileForm">
                     <div class="form-group">
-                        <label for="memName">회원 이름 <span class="required">*</span></label>
+                        <label for="memName">회원 이름</label>
                         <input type="text" id="memName" name="memName" value="${memberVO.memName}">
                     </div>
                     
                     <div class="form-group">
-                        <label for="memId">아이디 <span class="required">*</span></label>
-                        <div class="input-with-button">
-                            <input type="text" id="memId" name="memId" value="${memberVO.memId}">
-                            <button type="button" class="check-button">중복확인</button>
-                        </div>
+                        <label for="memId">아이디</label>
+                        <input type="text" id="memId" name="memId" value="${memberVO.memId}" class="id-strong" readonly>
                     </div>
                     
                     <div class="form-group">
@@ -261,18 +227,18 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="memTel">휴대폰 번호 <span class="required">*</span></label>
+                        <label for="memTel">휴대폰 번호</label>
                         <input type="tel" id="memTel" name="memTel" value="${memberVO.memTel}" 
                                pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}">
                     </div>
                     
                     <div class="form-group">
-                        <label for="memEmail">이메일 <span class="required">*</span></label>
+                        <label for="memEmail">이메일</label>
                         <input type="text" id="memEmail" name="memEmail" value="${memberVO.memEmail}">
                     </div>
                     
                     <div class="form-group">
-                        <label for="memAddr">주소 <span class="required">*</span></label>
+                        <label for="memAddr">주소</label>
                         <input type="text" id="memAddr" name="memAddr" value="${memberVO.memAddr}">
                     </div>
                     
@@ -473,35 +439,6 @@
                     });
                 });
             }
-        });
-    });
-
-    // 중복확인 버튼 클릭 이벤트
-    document.querySelector('.check-button').addEventListener('click', function() {
-        const memId = document.getElementById('memId').value.trim();
-        if (!memId) {
-            showInputAlert('아이디를 입력해주세요', 'memId');
-            return;
-        }
-        
-        // 서버에 중복 확인 요청
-        fetch('/mypage/check-id?memId=' + memId, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-        })
-        .then(response => response.json())
-        .then(available => {
-            if (available) {
-                showInputAlert('사용 가능한 아이디입니다.', null, '사용 가능', 'success');
-            } else {
-                showInputAlert('이미 사용 중인 아이디입니다.', 'memId', '중복', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showInputAlert('서버 오류가 발생했습니다. 다시 시도해주세요.', null, '오류', 'error');
         });
     });
 
