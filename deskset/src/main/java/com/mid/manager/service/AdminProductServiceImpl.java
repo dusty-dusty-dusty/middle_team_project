@@ -35,9 +35,9 @@ public class AdminProductServiceImpl implements AdminProductService {
 
 
 	@Override
-	public ResponseEntity<RegistProductVO> getcategoryATTR(String category) {
-		ResponseEntity<RegistProductVO> result = adminProductDAO.getcategoryATTR(category);
-		return result;
+	public ResponseEntity<List<RegistProductVO>> getcategoryATTR(String category) {
+		List<RegistProductVO> result = adminProductDAO.getcategoryATTR(category);
+		return ResponseEntity.ok(result);
 	}
 
 }

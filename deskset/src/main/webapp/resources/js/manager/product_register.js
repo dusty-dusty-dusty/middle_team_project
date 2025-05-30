@@ -3,7 +3,7 @@ $(document).ready(function() {
     let pageLoaded = false;
     let loadingIndicator = $('<div class="loading-spinner text-center py-4"><div class="spinner-border text-primary" role="status"><span class="sr-only">로딩중...</span></div></div>');
     
-    // 초기 페이지 로딩 함수
+/*    // 초기 페이지 로딩 함수
     function initPage() {
         $('#mainContent').hide();
         $('#pageContainer').prepend(loadingIndicator);
@@ -31,7 +31,7 @@ $(document).ready(function() {
     }
     
     // 페이지 초기화 실행
-    initPage();
+    initPage();*/
     
     // 카테고리 변경 시 관련 필드 표시/숨김 처리 (이벤트 위임)
     $(document).on('change', 'input[name="category"]', function() {
@@ -57,10 +57,11 @@ $(document).ready(function() {
             success: function(response) {
                 // 필드 컨테이너 비우기
                 $('#categoryFields').empty();
-                
+				console.log(response);
+				console.log(response.attr_name);
                 // 서버에서 받은 필드 데이터로 HTML 생성
-                if (response.result && response.result.length > 0) {
-                    $.each(response.result, function(index, field) {
+                if (response && response.length > 0) {
+                    $.each(response, function(index, field) {
                         var fieldHtml = generateFieldHtml(field);
                         $('#categoryFields').append(fieldHtml);
                     });
@@ -83,8 +84,8 @@ $(document).ready(function() {
         // 모든 필드 타입을 텍스트 입력 형식으로 변환
         return `
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="${field.id}">${field.label}</label>
-                <input type="text" id="${field.id}" name="${field.name}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="${field.placeholder || ''}">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="${field.attr_name}">${field.attr_name}</label>
+                <input type="text" id="${field.attr_name}" name="${field.attr_name}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="${field.attr_name || ''}">
             </div>`;
     }
     
@@ -153,9 +154,9 @@ $(document).ready(function() {
             return false;
         }
         
-        // 파일 크기 검사 (최대 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            $('#uploadStatus').html('<div class="my-2 text-red-500">파일 크기는 5MB 이하여야 합니다.</div>');
+        // 파일 크기 검사 (최대 20MB)
+        if (file.size > 20 * 1024 * 1024) {
+            $('#uploadStatus').html('<div class="my-2 text-red-500">파일 크기는 20MB 이하여야 합니다.</div>');
             return false;
         }
         
@@ -187,9 +188,9 @@ $(document).ready(function() {
     function uploadFile(file) {
         var formData = new FormData();
         formData.append('file', file);
-        
+        formData.append('imgOrder', imgOrder);
         $.ajax({
-            url: '/api/upload',
+            url: '/imgupload',
             type: 'POST',
             data: formData,
             processData: false,
@@ -241,7 +242,16 @@ $(document).ready(function() {
                 
                 // 리디렉션 전 잠시 대기
                 setTimeout(function() {
-                    window.location.href = 'manager/admin_product';
+        		    $.ajax({
+				        url: "admin_product",
+				        method: 'GET',
+				        success: function(data) {
+				            $('#main-content').html(data);
+				        },
+				        error: function() {
+				            alert('컨텐츠를 불러오는 데 실패했습니다.');
+				        }
+				    });
                 }, 1000);
             },
             error: function(xhr, status, error) {
@@ -316,8 +326,6 @@ $(document).ready(function() {
 		            alert('컨텐츠를 불러오는 데 실패했습니다.');
 		        }
 		    });
-
-/*window.location.href = 'admin_product';*/
         }
     });
     

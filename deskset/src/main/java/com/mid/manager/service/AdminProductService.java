@@ -16,7 +16,7 @@ public interface AdminProductService {
 	//제품 목록 불러오기
 	List<ProductCAJoinVO> getProductListAD();
 
-	ResponseEntity<RegistProductVO> getcategoryATTR(String category);
+	ResponseEntity<List<RegistProductVO>> getcategoryATTR(String category);
 	
 
 }

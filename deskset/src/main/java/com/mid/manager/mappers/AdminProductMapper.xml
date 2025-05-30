@@ -15,24 +15,11 @@
 	
 	<select id="getcategoryATTR" parameterType="String" resultType="com.mid.manager.model.RegistProductVO">
 		SELECT 
-			product_no;
-			admin_no;
-			product_name;
-			product_mfc;
-			product_price;
-			product_stock;
-			product_image;
-			product_thum;
-			product_cont;
-			cate_id;
-			cate_name;
-			pn_prefix;
-			attr_id;
-			attr_name;
-			attr_value;
-		FROM PRODUCT p
-		LEFT JOIN CATEGORY c ON p.cate_id = c.cate_id
-		LEFT JOIN ADMIN a ON p.admin_no = a.admin_no
+			c.cate_id,
+			a.attr_id,
+			a.attr_name
+		FROM ATTR a
+		LEFT JOIN CATEGORY c ON a.cate_id = c.cate_id
 		WHERE c.cate_name = #{selectedCategory}
 	</select>
 	
@@ -58,3 +45,25 @@
 
 
 </mapper>
+<!-- 		SELECT 
+			p.product_no,
+			p.admin_no,
+			p.product_name,
+			p.product_mfc,
+			p.product_price,
+			p.product_stock,
+			p.product_image,
+			p.product_thum,
+			p.product_cont,
+			c.cate_id,
+			c.cate_name,
+			c.pn_prefix,
+			at.attr_id,
+			at.attr_name,
+			atv.attr_value
+		FROM PRODUCT p
+		LEFT JOIN CATEGORY c ON p.cate_id = c.cate_id
+		LEFT JOIN ADMIN ad ON p.admin_no = ad.admin_no
+		LEFT JOIN ATTR_VALUE atv ON p.product_no = atv.product_no
+		LEFT JOIN ATTR at ON atv.attr_id = at.attr_id
+		WHERE c.cate_name = #{selectedCategory} -->
