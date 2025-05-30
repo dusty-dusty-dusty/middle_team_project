@@ -14,6 +14,7 @@
 </head>
 <body>
 
+
   <!--  헤더 include -->
   <jsp:include page="../common/header.jsp" />
 
@@ -34,6 +35,13 @@
       <button class="banner-btn prev">‹</button>
       <button class="banner-btn next">›</button>
     </section>
+
+
+	<!-- 추천 결과 출력 영역 -->
+<div id="recommendationArea" style="margin: 30px; text-align: center;"></div>
+
+
+
 
     <!--  상품 리스트 -->
     <section class="product">
@@ -77,6 +85,75 @@
 
   <!--  푸터 include -->
   <jsp:include page="../common/footer.jsp" />
+  
+  <!-- 챗봇 버튼 -->
+<button id="chatBotToggle">💬</button>
+
+<!-- 챗봇 모달 -->
+<div id="chatBotModal">
+    <div>
+        DeskSet AI Chatbot
+    </div>
+    <div id="chatContent"></div>
+    <div>
+        <input type="text" id="chatInput" placeholder="메시지를 입력하세요">
+        <button onclick="sendChat()">전송</button>
+    </div>
+</div>
+
+<script>
+    // 버튼 클릭하면 챗봇 모달 열고 닫기
+    document.getElementById("chatBotToggle").onclick = function() {
+        var modal = document.getElementById("chatBotModal");
+        if (modal.style.display === "none" || modal.style.display === "") {
+            modal.style.display = "flex";
+        } else {
+            modal.style.display = "none";
+        }
+    };
+
+    // 전송 버튼 클릭 이벤트 (임시 - 나중에 API 연결 예정)
+    function sendChat() {
+    var input = document.getElementById("chatInput");
+    var chatContent = document.getElementById("chatContent");
+    var userMessage = input.value;
+
+    if (userMessage.trim() === "") return;
+
+    // 사용자 입력 표시
+    chatContent.innerHTML += "<p class='user-message'><strong>나:</strong> " + userMessage + "</p>";
+    chatContent.innerHTML += "<p id='loadingMessage' class='bot-message'><strong>챗봇:</strong> 잠시만 기다려주세요...</p>";
+    chatContent.scrollTop = chatContent.scrollHeight;
+    input.value = "";
+
+    // AJAX 요청 (Spring Controller로 메시지 전달)
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "${pageContext.request.contextPath}/deskset/chat");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            var loadingMessage = document.getElementById("loadingMessage");
+            if (loadingMessage) loadingMessage.remove();
+
+            if (xhr.status === 200) {
+                var botResponse = xhr.responseText;
+
+                // 챗봇 응답 표시
+                chatContent.innerHTML += "<p class='bot-message'><strong>챗봇:</strong> " + botResponse + "</p>";
+            } else {
+                chatContent.innerHTML += "<p class='bot-message'><strong>챗봇:</strong> 오류가 발생했습니다. 다시 시도해주세요.</p>";
+            }
+
+            chatContent.scrollTop = chatContent.scrollHeight;
+        }
+    };
+    xhr.send("question=" + encodeURIComponent(userMessage));
+    }
+</script>
+  
+ 
+ 
+  
 
 </body>
 </html>

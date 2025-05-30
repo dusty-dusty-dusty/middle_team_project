@@ -299,6 +299,11 @@
 	</select>
 
 
+	<select id="getProductImagesByNo" parameterType="String" resultType="String">
+    SELECT IMG_PATH
+    FROM PRODUCT_EXP_IMG
+    WHERE PRODUCT_NO = #{product_no}
+	</select>
 
 
 
