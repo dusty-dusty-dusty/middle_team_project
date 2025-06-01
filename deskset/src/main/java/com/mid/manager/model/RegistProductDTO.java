@@ -1,5 +1,8 @@
 package com.mid.manager.model;
 
+import lombok.Data;
+
+@Data
 public class RegistProductDTO {
 	private String cate_id;
 	private String admin_no;
@@ -8,15 +11,9 @@ public class RegistProductDTO {
 	private String product_mfc;
 	private Integer product_price;
 	private Integer product_stock;
-	
-	private String attr_id;
-	private String attr_value;
-	
+
 	private String product_image;
 	private String product_thum;
 	private String product_cont;
-	
-	
-	
 	
 }
