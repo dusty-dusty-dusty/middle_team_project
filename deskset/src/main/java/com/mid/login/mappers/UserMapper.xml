@@ -17,7 +17,7 @@
             mem_tel,
             mem_regdate
         ) VALUES (
-            MEMBER_SEQ.NEXTVAL,
+            (SELECT 'M' || LPAD(COUNT(*) + 1, 4, '0') FROM MEMBER),
             #{memName},
             #{memEmail},
             #{memId},
@@ -28,7 +28,7 @@
         )
     </insert>
 
-    <!-- 회원 정보 조회 (로그인) -->
+    <!-- 나머지 부분은 그대로 유지 -->
     <select id="getUserInfo" resultType="com.mid.login.model.UserInfoVO">
         SELECT 
             mem_no AS memNo,
@@ -43,8 +43,8 @@
         WHERE mem_id = #{memId}
         AND mem_pwd = #{memPwd}
     </select>
-
-    <!-- 아이디 중복 체크 -->
+	
+	<!-- 아이디 중복 체크 -->
     <select id="idCheck" parameterType="string" resultType="int">
         SELECT COUNT(*)
         FROM MEMBER
