@@ -194,20 +194,26 @@
         <div class="main-content">
             <h2 class="page-title">개인정보 수정</h2>
             <div class="edit-profile-container">
-                <form action="/mypage/edit-profile" method="POST" class="edit-profile-form" id="editProfileForm">
+                <form action="<c:url value='/mypage/profile/edit-profile'/>" method="POST" class="edit-profile-form" id="editProfileForm" autocomplete="off">
+                    <input type="hidden" id="memNo" name="memNo" value="${memberVO.memNo}">
+                    <!-- 기존 값 hidden input으로 저장 -->
+                    <input type="hidden" id="origMemName" value="${memberVO.memName}">
+                    <input type="hidden" id="origMemTel" value="${memberVO.memTel}">
+                    <input type="hidden" id="origMemEmail" value="${memberVO.memEmail}">
+                    <input type="hidden" id="origMemAddr" value="${memberVO.memAddr}">
                     <div class="form-group">
                         <label for="memName">회원 이름</label>
-                        <input type="text" id="memName" name="memName" value="${memberVO.memName}">
+                        <input type="text" id="memName" name="memName" value="${memberVO.memName}" autocomplete="name">
                     </div>
                     
                     <div class="form-group">
                         <label for="memId">아이디</label>
-                        <input type="text" id="memId" name="memId" value="${memberVO.memId}" class="id-strong" readonly>
+                        <input type="text" id="memId" name="memId" value="${memberVO.memId}" class="id-strong" readonly autocomplete="username">
                     </div>
                     
                     <div class="form-group">
                         <label for="memPwd">새 비밀번호 <span class="required">*</span></label>
-                        <input type="password" id="memPwd" name="memPwd">
+                        <input type="password" id="memPwd" name="memPwd" autocomplete="new-password">
                         <div class="password-requirements">
                             <div id="lengthCheck" class="requirement">
                                 <span class="icon">❌</span> 8자 이상
@@ -220,7 +226,7 @@
                     
                     <div class="form-group">
                         <label for="confirmPassword">새 비밀번호 확인 <span class="required">*</span></label>
-                        <input type="password" id="confirmPassword" name="confirmPassword">
+                        <input type="password" id="confirmPassword" name="confirmPassword" autocomplete="new-password">
                         <div id="matchCheck" class="requirement">
                             <span class="icon">❌</span> 비밀번호 일치
                         </div>
@@ -228,18 +234,17 @@
                     
                     <div class="form-group">
                         <label for="memTel">휴대폰 번호</label>
-                        <input type="tel" id="memTel" name="memTel" value="${memberVO.memTel}" 
-                               pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}">
+                        <input type="tel" id="memTel" name="memTel" value="${memberVO.memTel}" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" autocomplete="tel">
                     </div>
                     
                     <div class="form-group">
                         <label for="memEmail">이메일</label>
-                        <input type="text" id="memEmail" name="memEmail" value="${memberVO.memEmail}">
+                        <input type="text" id="memEmail" name="memEmail" value="${memberVO.memEmail}" autocomplete="email">
                     </div>
                     
                     <div class="form-group">
                         <label for="memAddr">주소</label>
-                        <input type="text" id="memAddr" name="memAddr" value="${memberVO.memAddr}">
+                        <input type="text" id="memAddr" name="memAddr" value="${memberVO.memAddr}" autocomplete="street-address">
                     </div>
                     
                     <div class="button-group">
@@ -260,7 +265,6 @@
         return checks;
     }
 
-    // SweetAlert2로 입력값 미입력 시 알림 및 포커스 이동 함수
     function showInputAlert(message, fieldId, title = '필수 입력', icon = 'warning') {
         Swal.fire({
             title: title,
@@ -276,10 +280,176 @@
         });
     }
 
+    // submit 이벤트 중복 방지 및 로직 명확화
+    (function() {
+        const form = document.getElementById('editProfileForm');
+        if (!form) return;
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            // 기존 값과 비교
+            const orig = {
+                memName: document.getElementById('origMemName').value,
+                memTel: document.getElementById('origMemTel').value,
+                memEmail: document.getElementById('origMemEmail').value,
+                memAddr: document.getElementById('origMemAddr').value
+            };
+            const curr = {
+                memName: document.getElementById('memName').value,
+                memTel: document.getElementById('memTel').value,
+                memEmail: document.getElementById('memEmail').value,
+                memAddr: document.getElementById('memAddr').value
+            };
+            let changed = false;
+            for (const key in orig) {
+                if (orig[key] !== curr[key]) {
+                    changed = true;
+                    break;
+                }
+            }
+            const password = document.getElementById('memPwd').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // 비밀번호 입력이 있으면 변경된 것으로 간주
+            if (password.trim() || confirmPassword.trim()) {
+                changed = true;
+            }
+
+            // 회원정보가 바뀌었으면 비밀번호 입력 필수
+            if (changed) {
+                if (!password.trim() || !confirmPassword.trim()) {
+                    showInputAlert('회원정보를 수정하려면 새 비밀번호와 확인을 모두 입력해야 합니다.', 'memPwd', '비밀번호 입력 필요', 'warning');
+                    return;
+                }
+                if (password !== confirmPassword) {
+                    showInputAlert('비밀번호가 일치하지 않습니다.', 'confirmPassword', '비밀번호 불일치', 'warning');
+                    return;
+                }
+                const validations = validatePassword(password);
+                if (!validations.length || !validations.specialChar) {
+                    showInputAlert('비밀번호는 8자 이상, 특수문자 2개 이상이어야 합니다.', 'memPwd', '비밀번호 규칙 오류', 'warning');
+                    return;
+                }
+            } else {
+                showInputAlert('변경된 정보가 없습니다.', null, '수정 불가', 'warning');
+                return;
+            }
+
+            // 휴대폰 번호 형식 검사
+            const telPattern = /^[0-9]{3}-[0-9]{4}-[0-9]{4}$/;
+            const telField = document.getElementById('memTel');
+            if (!telPattern.test(telField.value)) {
+                showInputAlert('휴대폰 번호를 올바른 형식으로 입력해주세요. (예: 010-1234-5678)', 'memTel', '형식 오류', 'warning');
+                return;
+            }
+            // 이메일 형식 검사
+            const emailField = document.getElementById('memEmail');
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(emailField.value)) {
+                showInputAlert('올바른 이메일 주소를 입력해주세요.', 'memEmail', '형식 오류', 'warning');
+                return;
+            }
+
+            // 수정 확인 대화상자
+            Swal.fire({
+                title: '개인정보 수정',
+                text: '입력하신 정보로 수정하시겠습니까?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '수정',
+                cancelButtonText: '취소',
+                confirmButtonColor: '#00a8e8',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // context path 동적 추출
+                    var contextPath = window.location.pathname.split('/')[1] ? '/' + window.location.pathname.split('/')[1] : '';
+                    var postUrl = contextPath + '/mypage/profile/edit-profile';
+                    const telField = document.getElementById('memTel');
+                    // FormData 대신 URLSearchParams 사용
+                    const params = new URLSearchParams();
+                    params.append('memNo', document.getElementById('memNo').value);
+                    params.append('memId', document.getElementById('memId').value);
+                    params.append('memName', document.getElementById('memName').value);
+                    params.append('memPwd', document.getElementById('memPwd').value);
+                    params.append('confirmPassword', document.getElementById('confirmPassword').value);
+                    params.append('memTel', telField.value.replace(/-/g, ''));
+                    params.append('memEmail', document.getElementById('memEmail').value);
+                    params.append('memAddr', document.getElementById('memAddr').value);
+                    fetch(postUrl, {
+                        method: 'POST',
+                        body: params
+                    })
+                    .then(response => {
+                        console.log('응답 status:', response.status);
+                        if (!response.ok) {
+                            return response.text().then(text => { throw new Error('HTTP ' + response.status + ': ' + text); });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('응답 데이터:', data);
+                        if (data.success) {
+                            Swal.fire({
+                                title: '수정 완료',
+                                text: '개인정보가 성공적으로 수정되었습니다.',
+                                icon: 'success',
+                                confirmButtonText: '확인',
+                                confirmButtonColor: '#00a8e8'
+                            }).then(() => {
+                                window.location.href = contextPath + '/mypage/check-profile';
+                            });
+                        } else {
+                            Swal.fire({
+                                title: '수정 실패',
+                                text: data.message || '수정에 실패했습니다.',
+                                icon: 'error',
+                                confirmButtonText: '확인',
+                                confirmButtonColor: '#00a8e8'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('fetch 오류:', error);
+                        Swal.fire({
+                            title: '오류',
+                            text: '수정 중 오류가 발생했습니다.\n' + error,
+                            icon: 'error',
+                            confirmButtonText: '확인',
+                            confirmButtonColor: '#00a8e8'
+                        });
+                    });
+                }
+            });
+        });
+    })();
+
+    // 페이지 진입 시 하이픈 자동 변환
+    window.addEventListener('DOMContentLoaded', function() {
+        const telField = document.getElementById('memTel');
+        if (telField && telField.value && telField.value.length === 11 && telField.value.indexOf('-') === -1) {
+            telField.value = telField.value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+        }
+    });
+
+    // 휴대폰 번호 입력 시 자동 하이픈 (개선)
+    document.getElementById('memTel').addEventListener('input', function(e) {
+        let value = this.value.replace(/[^0-9]/g, '').slice(0, 11);
+        let result = '';
+        if (value.length < 4) {
+            result = value;
+        } else if (value.length < 8) {
+            result = value.substr(0, 3) + '-' + value.substr(3);
+        } else {
+            result = value.substr(0, 3) + '-' + value.substr(3, 4) + '-' + value.substr(7, 4);
+        }
+        this.value = result;
+    });
+
+    // 비밀번호 입력 시 실시간 유효성 검사
     document.getElementById('memPwd').addEventListener('input', function() {
         const password = this.value;
         const validations = validatePassword(password);
-        
+
         // 길이 체크
         const lengthCheck = document.getElementById('lengthCheck');
         if (validations.length) {
@@ -291,7 +461,7 @@
             lengthCheck.classList.add('invalid');
             lengthCheck.classList.remove('valid');
         }
-        
+
         // 특수문자 체크
         const specialCharCheck = document.getElementById('specialCharCheck');
         if (validations.specialChar) {
@@ -303,12 +473,13 @@
             specialCharCheck.classList.add('invalid');
             specialCharCheck.classList.remove('valid');
         }
-        
+
         // 비밀번호 확인 체크
         const confirmPassword = document.getElementById('confirmPassword').value;
         checkPasswordMatch(password, confirmPassword);
     });
 
+    // 비밀번호 확인 입력 시 일치 여부 실시간 검사
     document.getElementById('confirmPassword').addEventListener('input', function() {
         const password = document.getElementById('memPwd').value;
         const confirmPassword = this.value;
@@ -327,134 +498,12 @@
                 matchCheck.classList.add('invalid');
                 matchCheck.classList.remove('valid');
             }
+        } else {
+            matchCheck.querySelector('.icon').textContent = '❌';
+            matchCheck.classList.add('invalid');
+            matchCheck.classList.remove('valid');
         }
     }
-
-    // 폼 유효성 검사
-    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // 필수 필드 검사
-        const requiredFields = {
-            'memName': '이름을 입력해주세요',
-            'memId': '아이디를 입력해주세요',
-            'memPwd': '비밀번호를 입력해주세요',
-            'memTel': '휴대폰 번호를 입력해주세요',
-            'memEmail': '이메일을 입력해주세요',
-            'memAddr': '주소를 입력해주세요'
-        };
-        
-        for (const [fieldId, message] of Object.entries(requiredFields)) {
-            const field = document.getElementById(fieldId);
-            if (!field.value.trim()) {
-                showInputAlert(message, fieldId);
-                return;
-            }
-        }
-
-        const password = document.getElementById('memPwd').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        
-        if (password) {
-            const validations = validatePassword(password);
-            if (!validations.length && !validations.specialChar) {
-                showInputAlert('비밀번호는 8자 이상이고 특수문자를 2개 이상 포함해야 합니다.', 'memPwd', '비밀번호 오류', 'error');
-                return;
-            } else if (!validations.length) {
-                showInputAlert('비밀번호는 8자 이상이어야 합니다.', 'memPwd', '비밀번호 오류', 'error');
-                return;
-            } else if (!validations.specialChar) {
-                showInputAlert('비밀번호는 특수문자를 2개 이상 포함해야 합니다.', 'memPwd', '비밀번호 오류', 'error');
-                return;
-            }
-            if (password !== confirmPassword) {
-                showInputAlert('비밀번호가 일치하지 않습니다.', 'confirmPassword', '비밀번호 불일치', 'error');
-                return;
-            }
-        }
-        
-        // 휴대폰 번호 형식 검사
-        const telPattern = /^[0-9]{3}-[0-9]{4}-[0-9]{4}$/;
-        const telField = document.getElementById('memTel');
-        if (!telPattern.test(telField.value)) {
-            showInputAlert('휴대폰 번호를 올바른 형식으로 입력해주세요. (예: 010-1234-5678)', 'memTel', '형식 오류', 'warning');
-            return;
-        }
-        
-        // 이메일 형식 검사 (SweetAlert2로 통일)
-        const emailField = document.getElementById('memEmail');
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(emailField.value)) {
-            showInputAlert('올바른 이메일 주소를 입력해주세요.', 'memEmail', '형식 오류', 'warning');
-            return;
-        }
-
-        // 수정 확인 대화상자
-        Swal.fire({
-            title: '개인정보 수정',
-            text: '입력하신 정보로 수정하시겠습니까?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: '수정',
-            cancelButtonText: '취소',
-            confirmButtonColor: '#00a8e8',
-            cancelButtonColor: '#6c757d'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // AJAX로 폼 데이터 전송
-                const formData = new FormData(this);
-                fetch(this.action, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire({
-                            title: '수정 완료',
-                            text: '개인정보가 성공적으로 수정되었습니다.',
-                            icon: 'success',
-                            confirmButtonText: '확인',
-                            confirmButtonColor: '#00a8e8'
-                        }).then(() => {
-                            window.location.href = '/deskset/mypage/check-profile';
-                        });
-                    } else {
-                        Swal.fire({
-                            title: '수정 실패',
-                            text: data.message || '수정에 실패했습니다.',
-                            icon: 'error',
-                            confirmButtonText: '확인',
-                            confirmButtonColor: '#00a8e8'
-                        });
-                    }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        title: '오류',
-                        text: '수정 중 오류가 발생했습니다.',
-                        icon: 'error',
-                        confirmButtonText: '확인',
-                        confirmButtonColor: '#00a8e8'
-                    });
-                });
-            }
-        });
-    });
-
-    // 휴대폰 번호 입력 시 자동 하이픈
-    document.getElementById('memTel').addEventListener('input', function(e) {
-        let value = this.value.replace(/[^0-9]/g, '');
-        let result = '';
-        if (value.length < 4) {
-            result = value;
-        } else if (value.length < 8) {
-            result = value.substr(0, 3) + '-' + value.substr(3);
-        } else {
-            result = value.substr(0, 3) + '-' + value.substr(3, 4) + '-' + value.substr(7, 4);
-        }
-        this.value = result;
-    });
     </script>
 
     <!-- 공통 푸터 포함 -->

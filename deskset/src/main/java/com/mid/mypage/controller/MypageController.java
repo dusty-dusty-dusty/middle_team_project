@@ -4,14 +4,21 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.mid.mypage.model.MemberVO;
+import com.mid.mypage.service.MemberService;
 
 @Controller
 @RequestMapping("/mypage")
 public class MypageController {
     private static final String TEST_MEMBER_ID = "hong123";
+
+    @Autowired
+    private MemberService memberService;
 
     /**
      * 마이페이지 메인 진입
@@ -27,10 +34,16 @@ public class MypageController {
     }
 
     /**
-     * 개인정보 확인 페이지 진입
+     * 개인정보 확인 페이지 진입 (DB에서 회원정보 조회해서 JSP에 전달)
      */
     @GetMapping("/check-profile")
-    public String checkProfile() {
+    public String checkProfile(HttpSession session, Model model) {
+        if (session.getAttribute("memNo") == null) {
+            session.setAttribute("memNo", "MEM000001");
+        }
+        String memNo = (String) session.getAttribute("memNo");
+        MemberVO member = memberService.getMemberByNo(memNo);
+        model.addAttribute("memberVO", member);
         return "mypage/check-profile";
     }
 
@@ -38,7 +51,13 @@ public class MypageController {
      * 개인정보 수정 폼 진입
      */
     @GetMapping("/edit-profile")
-    public String editProfileForm() {
+    public String editProfileForm(HttpSession session, Model model) {
+        if (session.getAttribute("memNo") == null) {
+            session.setAttribute("memNo", "MEM000001");
+        }
+        String memNo = (String) session.getAttribute("memNo");
+        MemberVO member = memberService.getMemberByNo(memNo);
+        model.addAttribute("memberVO", member);
         return "mypage/edit-profile";
     }
 
@@ -51,23 +70,25 @@ public class MypageController {
             @ModelAttribute com.mid.mypage.model.MemberVO memberVO,
             @RequestParam(value = "confirmPassword", required = false) String confirmPassword) {
         java.util.Map<String, Object> result = new java.util.HashMap<>();
-        String pwd = memberVO.getMemPwd();
-        if (pwd == null || pwd.trim().isEmpty() || confirmPassword == null || confirmPassword.trim().isEmpty()) {
-            result.put("success", false);
-            result.put("message", "회원정보를 수정하려면 새 비밀번호와 확인을 모두 입력해야 합니다.");
-            return result;
-        }
-        if (!pwd.equals(confirmPassword)) {
-            result.put("success", false);
-            result.put("message", "비밀번호가 일치하지 않습니다.");
-            return result;
-        }
         try {
-            // TODO: 실제 DB 업데이트 로직 (서비스/매퍼 호출)
-            result.put("success", true);
+            String pwd = memberVO.getMemPwd();
+            if (pwd == null || pwd.trim().isEmpty() || confirmPassword == null || confirmPassword.trim().isEmpty()) {
+                result.put("success", false);
+                result.put("message", "회원정보를 수정하려면 새 비밀번호와 확인을 모두 입력해야 합니다.");
+                return result;
+            }
+            if (!pwd.equals(confirmPassword)) {
+                result.put("success", false);
+                result.put("message", "비밀번호가 일치하지 않습니다.");
+                return result;
+            }
+            int updated = memberService.updateMember(memberVO);
+            result.put("success", updated > 0);
+            result.put("message", updated > 0 ? "수정 성공" : "수정 실패");
         } catch (Exception e) {
+            e.printStackTrace(); // 콘솔에 에러 출력
             result.put("success", false);
-            result.put("message", "수정 실패: " + e.getMessage());
+            result.put("message", e.getMessage()); // 에러 메시지 반환
         }
         return result;
     }

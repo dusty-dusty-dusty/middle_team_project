@@ -49,25 +49,32 @@ public class ProfileController {
     @PostMapping("/edit-profile")
     @ResponseBody
     public Map<String, Object> updateProfile(
-            @ModelAttribute MemberVO memberVO,
-            @RequestParam(value = "confirmPassword", required = false) String confirmPassword,
-            HttpSession session) {
-        if (session.getAttribute("memNo") == null) {
-            session.setAttribute("memNo", "MEM000001");
-        }
-        String memNo = (String) session.getAttribute("memNo");
-        System.out.println("==== [DEBUG] update-profile: memNo = " + memNo);
-        System.out.println("==== [DEBUG] update-profile: memberVO(before set) = " + memberVO);
+        @RequestParam("memNo") String memNo,
+        @RequestParam("memId") String memId,
+        @RequestParam("memName") String memName,
+        @RequestParam("memPwd") String memPwd,
+        @RequestParam("memEmail") String memEmail,
+        @RequestParam("memAddr") String memAddr,
+        @RequestParam("memTel") String memTel,
+        @RequestParam("confirmPassword") String confirmPassword,
+        HttpSession session
+    ) {
+        MemberVO memberVO = new MemberVO();
         memberVO.setMemNo(memNo);
-        System.out.println("==== [DEBUG] update-profile: memberVO(after set) = " + memberVO);
+        memberVO.setMemId(memId);
+        memberVO.setMemName(memName);
+        memberVO.setMemPwd(memPwd);
+        memberVO.setMemEmail(memEmail);
+        memberVO.setMemAddr(memAddr);
+        memberVO.setMemTel(memTel);
+        System.out.println("==== [DEBUG] update-profile: memberVO (RequestParam 방식) = " + memberVO);
         Map<String, Object> result = new HashMap<>();
-        String pwd = memberVO.getMemPwd();
-        if (pwd == null || pwd.trim().isEmpty() || confirmPassword == null || confirmPassword.trim().isEmpty()) {
+        if (memPwd == null || memPwd.trim().isEmpty() || confirmPassword == null || confirmPassword.trim().isEmpty()) {
             result.put("success", false);
             result.put("message", "회원정보를 수정하려면 새 비밀번호와 확인을 모두 입력해야 합니다.");
             return result;
         }
-        if (!pwd.equals(confirmPassword)) {
+        if (!memPwd.equals(confirmPassword)) {
             result.put("success", false);
             result.put("message", "비밀번호가 일치하지 않습니다.");
             return result;
