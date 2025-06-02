@@ -8,7 +8,7 @@
     <!-- 회원 등록 -->
     <insert id="insertUser" parameterType="com.mid.login.model.UserInfoVO">
         INSERT INTO MEMBER (
-            mem_no,
+            
             mem_name,
             mem_email,
             mem_id,
@@ -17,7 +17,7 @@
             mem_tel,
             mem_regdate
         ) VALUES (
-            (SELECT 'M' || LPAD(COUNT(*) + 1, 4, '0') FROM MEMBER),
+            
             #{memName},
             #{memEmail},
             #{memId},
@@ -31,7 +31,7 @@
     <!-- 나머지 부분은 그대로 유지 -->
     <select id="getUserInfo" resultType="com.mid.login.model.UserInfoVO">
         SELECT 
-            mem_no AS memNo,
+            
             mem_name AS memName,
             mem_email AS memEmail,
             mem_id AS memId,
