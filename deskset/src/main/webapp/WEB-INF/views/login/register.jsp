@@ -46,7 +46,7 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             position: absolute;
             left: 50%;
-            top: 50%;
+            top: 60%; /* 중앙(50%)에서 아래로 내림 */
             transform: translate(-50%, -50%);
             z-index: 10;
         }
@@ -139,7 +139,35 @@
         footer {
             margin-top: auto; /* 푸터를 하단에 고정 */
         }
+        .password-requirements {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .icon {
+            margin-right: 5px;
+        }
+        .valid {
+            color: green;
+        }
+        .invalid {
+            color: red;
+        }
+        .password-requirements-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .password-requirements-row .requirement {
+            margin-bottom: 0;
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         window.onload = function() {
             var registerError = "${registerError != null ? registerError : ''}";
@@ -206,17 +234,42 @@
             var memAddr = document.getElementsByName("memAddr")[0].value;
 
             if (!memId || !memPwd || !memPwdCheck || !memName || !memEmail || !memTel || !memAddr) {
-                alert("모든 필수 항목을 입력해주세요.");
+                Swal.fire('입력 오류', '모든 필수 항목을 입력해주세요.', 'warning');
                 return false;
             }
 
             if (document.getElementById("idCheckMsg").style.color !== "rgb(0, 123, 255)") {
-                alert("아이디 중복 확인을 해주세요.");
+                Swal.fire('아이디 중복 확인', '아이디 중복 확인을 해주세요.', 'warning');
                 return false;
             }
 
             return validatePassword();
         }
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.register-box form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!validateForm()) return;
+                const formData = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('회원가입 성공!', '', 'success').then(() => {
+                            location.href = '/user/login';
+                        });
+                    } else {
+                        Swal.fire('회원가입 실패', data.message, 'error');
+                    }
+                })
+                .catch(() => {
+                    Swal.fire('회원가입 실패', '알 수 없는 오류가 발생했습니다.', 'error');
+                });
+            });
+        });
     </script>
 </head>
 <body>

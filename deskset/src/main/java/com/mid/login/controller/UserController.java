@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -51,14 +52,48 @@ public class UserController {
 	}
 
 	@PostMapping("/register")
-	public String register(@ModelAttribute UserInfoVO userInfoVO, Model model) {
-		int result = userDAO.insertUser(userInfoVO);
-		if (result > 0) {
-			return "redirect:/user/login";
-		} else {
-			model.addAttribute("registerError", "회원 가입에 실패했습니다.");
-			return "login/register";
+	@ResponseBody
+	public Map<String, Object> register(
+			@RequestParam("memName") String memName,
+			@RequestParam("memEmail") String memEmail,
+			@RequestParam("memId") String memId,
+			@RequestParam("memPwd") String memPwd,
+			@RequestParam("memAddr") String memAddr,
+			@RequestParam("memTel") String memTel,
+			Model model) {
+		Map<String, Object> result = new java.util.HashMap<>();
+		UserInfoVO userInfoVO = new UserInfoVO();
+		userInfoVO.setMemName(memName);
+		userInfoVO.setMemEmail(memEmail);
+		userInfoVO.setMemId(memId);
+		userInfoVO.setMemPwd(memPwd);
+		userInfoVO.setMemAddr(memAddr);
+		userInfoVO.setMemTel(memTel);
+		try {
+			int insertResult = userDAO.insertUser(userInfoVO);
+			if (insertResult > 0) {
+				result.put("success", true);
+			} else {
+				result.put("success", false);
+				result.put("message", "회원 가입에 실패했습니다.");
+			}
+		} catch (Exception e) {
+			String errorMsg = e.getMessage();
+			System.out.println("[DEBUG][register] 회원가입 예외 발생: " + errorMsg);
+			e.printStackTrace();
+			System.out.println("[DEBUG][register] userInfoVO: " + userInfoVO);
+			if (errorMsg != null && errorMsg.contains("UQ_MEMBER_EMAIL")) {
+				result.put("success", false);
+				result.put("message", "이미 등록된 이메일입니다. 다른 이메일을 입력해 주세요.");
+			} else if (errorMsg != null && errorMsg.contains("unique constraint") && errorMsg.contains("EMAIL")) {
+				result.put("success", false);
+				result.put("message", "이 이메일은 이미 사용 중입니다.");
+			} else {
+				result.put("success", false);
+				result.put("message", "회원가입 중 오류가 발생했습니다.");
+			}
 		}
+		return result;
 	}
 
 	@GetMapping("/idCheck")

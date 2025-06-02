@@ -28,17 +28,28 @@
         )
     </insert>
 
+    <resultMap id="userInfoResultMap" type="com.mid.login.model.UserInfoVO">
+        <result property="memNo" column="mem_no"/>
+        <result property="memName" column="mem_name"/>
+        <result property="memEmail" column="mem_email"/>
+        <result property="memId" column="mem_id"/>
+        <result property="memPwd" column="mem_pwd"/>
+        <result property="memAddr" column="mem_addr"/>
+        <result property="memTel" column="mem_tel"/>
+        <result property="memRegdate" column="mem_regdate"/>
+    </resultMap>
+
     <!-- 나머지 부분은 그대로 유지 -->
-    <select id="getUserInfo" resultType="com.mid.login.model.UserInfoVO">
+    <select id="getUserInfo" resultMap="userInfoResultMap">
         SELECT 
-            
-            mem_name AS memName,
-            mem_email AS memEmail,
-            mem_id AS memId,
-            mem_pwd AS memPwd,
-            mem_addr AS memAddr,
-            mem_tel AS memTel,
-            mem_regdate AS memRegdate
+            mem_no,
+            mem_name,
+            mem_email,
+            mem_id,
+            mem_pwd,
+            mem_addr,
+            mem_tel,
+            mem_regdate
         FROM MEMBER
         WHERE mem_id = #{memId}
         AND mem_pwd = #{memPwd}

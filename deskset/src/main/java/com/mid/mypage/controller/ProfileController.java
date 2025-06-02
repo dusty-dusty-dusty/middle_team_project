@@ -9,6 +9,7 @@ import com.mid.mypage.service.MemberService;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
+import com.mid.login.model.UserInfoVO;
 
 @Controller
 @RequestMapping("/mypage/profile")
@@ -20,11 +21,11 @@ public class ProfileController {
     // 개인정보 확인
     @GetMapping("/check-profile")
     public String checkProfile(HttpSession session, Model model) {
-        // 세션에서 회원번호로 회원정보 조회
-        if (session.getAttribute("memNo") == null) {
-            session.setAttribute("memNo", "MEM000001");
+        UserInfoVO user = (UserInfoVO) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return "redirect:/user/login";
         }
-        String memNo = (String) session.getAttribute("memNo");
+        String memNo = user.getMemNo();
         System.out.println("==== [DEBUG] check-profile: memNo = " + memNo);
         MemberVO member = memberService.getMemberByNo(memNo);
         System.out.println("==== [DEBUG] check-profile: member = " + member);
@@ -35,11 +36,11 @@ public class ProfileController {
     // 개인정보 수정 폼 진입
     @GetMapping("/edit-profile")
     public String editProfileForm(HttpSession session, Model model) {
-        // 세션에서 회원번호로 회원정보 조회
-        if (session.getAttribute("memNo") == null) {
-            session.setAttribute("memNo", "MEM000001");
+        UserInfoVO user = (UserInfoVO) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return "redirect:/user/login";
         }
-        String memNo = (String) session.getAttribute("memNo");
+        String memNo = user.getMemNo();
         System.out.println("==== [DEBUG] edit-profile: memNo = " + memNo);
         MemberVO member = memberService.getMemberByNo(memNo);
         System.out.println("==== [DEBUG] edit-profile: member = " + member);
@@ -90,8 +91,14 @@ public class ProfileController {
                 result.put("message", "수정할 정보가 없습니다.");
             }
         } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", "수정 실패: " + e.getMessage());
+            String errorMsg = e.getMessage();
+            if (errorMsg != null && errorMsg.contains("UQ_MEMBER_TEL")) {
+                result.put("success", false);
+                result.put("message", "이미 등록된 휴대폰 번호입니다. 다른 번호를 입력해 주세요.");
+            } else {
+                result.put("success", false);
+                result.put("message", "수정 실패: " + e.getMessage());
+            }
         }
         return result;
     }
