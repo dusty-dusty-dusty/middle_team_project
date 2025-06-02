@@ -113,4 +113,14 @@ public class OrderController {
             throw e;
         }
     }
+
+    // 마이페이지 메인 진입(주문목록/배송조회로 리다이렉트)
+    @GetMapping({"", "/"})
+    public String myPage(HttpSession session) {
+        // 세션에 memId 없으면 테스트용 ID 세팅
+        if (session.getAttribute("memId") == null) {
+            session.setAttribute("memId", "hong123");
+        }
+        return "redirect:/mypage/orders";
+    }
 }
