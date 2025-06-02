@@ -23,6 +23,7 @@ public interface ProductDAO {
     List<ProductVO> getMouseList(Map<String, Object> filters);
     List<ProductVO> getMonitorList(Map<String, Object> filters);
     
+    List<String> getProductImagesByNo(String product_no);
     
     List<ReviewVO> getReviewsByProductNo(String product_no);
     

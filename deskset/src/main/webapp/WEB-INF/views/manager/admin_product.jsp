@@ -24,7 +24,7 @@
 			
 			<div class="flex gap-2">
 				<c:forEach items="${categoryList}" var="category">
-				  <label class="cursor-pointer px-4 py-2 border border-gray-300 rounded-full text-gray-700 transition-all duration-200 hover:bg-gray-100">
+				  <label class="adm_product_category_select cursor-pointer px-4 py-2 border border-gray-300 rounded-full text-gray-700 transition-all duration-200 hover:bg-gray-100">
 				  	<input type="checkbox" class="hidden toggle-checkbox" value="1">
 				  	<span class="label-text">${category.cate_name}</span>
 	 			  </label>

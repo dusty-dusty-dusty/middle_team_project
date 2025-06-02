@@ -86,7 +86,7 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	padding-left: 40px; /* 패딩 값을 20px에서 40px로 늘려 더 오른쪽으로 이동 */
+	padding-left: 40px; 
 }
 
 .order-table th:nth-child(3), .order-table td:nth-child(3) {

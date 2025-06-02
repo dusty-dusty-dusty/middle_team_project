@@ -52,16 +52,16 @@ nav a:hover {
 
 <header>
   <div class="logo">
-    <a href="${pageContext.request.contextPath}/index.jsp">
+    <a href="${pageContext.request.contextPath}/main/main_page">
       <img src="${pageContext.request.contextPath}/resources/images/common/logo.png" alt="DeskSet 로고" />
     </a>
   </div>
   <nav>
-    <a href="#">NOTICE</a>
-    <a href="#">KEYBOARD</a>
-    <a href="#">MOUSE</a>
-    <a href="#">MONITOR</a>
-    <a href="#">MYPAGE</a>
+    <a href="${pageContext.request.contextPath}/notice/NoticeBoardList">NOTICE</a>
+    <a href="${pageContext.request.contextPath}/product/sub_list">KEYBOARD</a>
+    <a href="${pageContext.request.contextPath}/product/sub_list2">MOUSE</a>
+    <a href="${pageContext.request.contextPath}/product/sub_list3">MONITOR</a>
+    <a href="${pageContext.request.contextPath}/mypage/orders">MYPAGE</a>
   </nav>
   <div class="login-area">
 	<c:if test="${empty sessionScope.loggedInUser}">

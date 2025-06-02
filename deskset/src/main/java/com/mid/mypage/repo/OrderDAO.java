@@ -1,6 +1,7 @@
 package com.mid.mypage.repo;
 
 import java.util.List;
+import java.util.Map;
 import com.mid.mypage.model.OrderVO;
 
 public interface OrderDAO {
@@ -9,5 +10,6 @@ public interface OrderDAO {
     void insertOrder(OrderVO order);
     void updateOrderStatus(OrderVO order);
     List<OrderVO> getOrderListByMemberId(String memId);
+    Map<String, Object> checkOrderData(String memId);
 } 
 // 수정
