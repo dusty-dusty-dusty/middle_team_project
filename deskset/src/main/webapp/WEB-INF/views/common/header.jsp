@@ -52,7 +52,7 @@ nav a:hover {
 
 <header>
   <div class="logo">
-    <a href="${pageContext.request.contextPath}/index.jsp">
+    <a href="${pageContext.request.contextPath}/main/main_page">
       <img src="${pageContext.request.contextPath}/resources/images/common/logo.png" alt="DeskSet 로고" />
     </a>
   </div>

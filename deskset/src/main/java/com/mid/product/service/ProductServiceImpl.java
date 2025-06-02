@@ -66,4 +66,10 @@ public class ProductServiceImpl implements ProductService {
     	return productDAO.getOrderDetailNo(product_no, mem_no);
     }
     
+    
+    @Override
+    public List<String> getProductImagesByNo(String product_no) {
+        return productDAO.getProductImagesByNo(product_no);
+    }
+    
 }
