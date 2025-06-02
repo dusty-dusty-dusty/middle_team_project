@@ -26,7 +26,7 @@
                         </when>
                     </choose>
                 </where>
-                ORDER BY TO_NUMBER(notice_no) DESC
+                ORDER BY notice_no DESC
             ) A
             WHERE ROWNUM &lt;= #{end}
         )

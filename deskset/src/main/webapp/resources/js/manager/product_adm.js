@@ -7,7 +7,7 @@ $(function(){
     });
     
     // 카테고리 라벨 클릭 이벤트 (체크박스 토글)
-    $(document).on('click', '.cursor-pointer', function(e) {
+    $(document).on('click', '.adm_product_category_select', function(e) {
         e.preventDefault();
         const checkbox = $(this).find('.toggle-checkbox');
         checkbox.prop('checked', !checkbox.prop('checked'));
@@ -44,7 +44,7 @@ $(function(){
             loadProductsByCategories(selectedCategories);
         }
     }
-    
+
     // 전체 상품 로드
     function loadAllProducts() {
         $.ajax({
@@ -60,6 +60,7 @@ $(function(){
         });
     }
     
+
     // 선택된 카테고리의 상품 로드
     function loadProductsByCategories(categories) {
         $.ajax({
@@ -210,35 +211,7 @@ $(function(){
 	        }
 	    });
 	});
-	
-/*	
-	//-------------카테고리체크박스---------------------------------------	
-		// 초기 상태 설정 (초기 생성된 요소용)
-	$(document).on('change', '.toggle-checkbox', function () {
-	  const $checkbox = $(this);
-	  const $label = $checkbox.closest('label');
-	
-	  if ($checkbox.is(':checked')) {
-	    $label.addClass('bg-blue-500 text-white border-blue-500');
-	  } else {
-	    $label.removeClass('bg-blue-500 text-white border-blue-500');
-	  }
-	});
-	
-	// 동적으로 생성된 체크박스도 포함해 처음 로딩 시 스타일 적용
-	$(document).on('DOMNodeInserted', function () {
-	  $('.toggle-checkbox').each(function () {
-	    const $checkbox = $(this);
-	    const $label = $checkbox.closest('label');
-	
-	    if ($checkbox.is(':checked')) {
-	      $label.addClass('bg-blue-500 text-white border-blue-500');
-	    } else {
-	      $label.removeClass('bg-blue-500 text-white border-blue-500');
-	    }
-	  });
-	});
-*/
+
 
 //-------------------------------카테고리 등록-------------------------------------------------------
 initCategoryForm();
@@ -304,20 +277,7 @@ function initCategoryForm() {
 	        }
 	    });
 	});
-			//------ 취소 버튼 클릭 시 상품 목록 페이지로 돌아가기-----
-    $(document).on('click','.product_reg_cancel', function() {
-        $.ajax({
-            url: '/deskset/manager/admin_product',
-            method: 'GET',
-            success: function(data) {
-                $('#main-content').html(data);
-            },
-            error: function(error) {
-                alert('관리자 목록을 불러오는 데 실패했습니다.');
-				console.log(error);
-            }
-        });
-    });
+
  			//----상품ID클릭 상품 정보 수정-----------
 	$(document).on('click', '.admin_modify_btn', function(e) {
 		e.preventDefault(); // 링크 이동 막기

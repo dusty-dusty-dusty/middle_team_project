@@ -102,19 +102,21 @@
 
     <!-- 상품 리스트 -->
     <section class="product-list-section">
-      <div class="product-grid">
-      
-        <c:forEach var="p" items="${keyboardList}">
-          <div class="product-card">
-            <a href="${pageContext.request.contextPath}/product/sub_product?product_no=${p.product_no}">
-              <img src="${pageContext.request.contextPath}/resources/images/sub_list/${p.product_image}" alt="${p.product_name}">
-              
-            </a>
-            <p class="product-price">${p.product_price}원</p>
-            <button class="cart-btn">장바구니</button>
-            <button class="buy-btn">구매하기</button>
-          </div>
-        </c:forEach>
+  <div class="product-grid">
+  
+    <c:forEach var="p" items="${keyboardList}">
+      <div class="product-card">
+        <a href="${pageContext.request.contextPath}/product/sub_product?product_no=${p.product_no}">
+          <img src="${pageContext.request.contextPath}/${p.product_thum}" alt="${p.product_name} 상세 이미지" />
+        </a>
+        <p class="product-name">${p.product_name}</p>
+        <p class="product-price">${p.product_price}원</p>
+        <div class="product-buttons">
+  		<button class="cart-btn">장바구니</button>
+  		<button class="buy-btn">구매하기</button>
+		</div>
+      </div>
+    </c:forEach>
       </div>
     </section>
 
