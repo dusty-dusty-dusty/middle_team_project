@@ -76,7 +76,8 @@
   <section class="product-review" id="review-section">
     <h3>리뷰</h3>
 
-   <form action="${pageContext.request.contextPath}/product/sub_product" method="post">
+   <form action="${pageContext.request.contextPath}/product/sub_product" method="post" class="review-form">
+
  <input type="hidden" name="product_no" value="${product.product_no}">
   <input type="hidden" name="order_detail_no" value="${order_detail_no}">
   

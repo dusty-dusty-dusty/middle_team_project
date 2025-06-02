@@ -212,7 +212,7 @@
 
   <!-- 모니터 필터링 검색 -->
   <select id="getMonitorList" parameterType="map" resultType="com.mid.product.model.ProductVO">
-    SELECT 
+    SELECT DISTINCT
       P.PRODUCT_NO, P.PRODUCT_NAME, P.PRODUCT_PRICE, P.PRODUCT_IMAGE, P.PRODUCT_THUM, P.PRODUCT_MFC
     FROM PRODUCT P
     WHERE P.CATE_ID = 'CTG003'

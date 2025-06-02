@@ -1,21 +1,19 @@
 .product-page {
   padding: 30px 60px;
 }
-
 /*  필터 영역 레이아웃 */
 .filter-bar {
   display: flex;
   flex-wrap: wrap;
   justify-content: center; /* 중앙 정렬 */
-  gap: 40px; /* 항목 간격 */
+  gap: 5px; /* 항목 간격 */
   background-color: #f9f9f9;
-  padding: 20px;
+  padding: 4px;
   border-radius: 8px;
    justify-content: space-between;
   margin-bottom: 30px;
   border: 1px solid #ccc;
 }
-
 /*  필터 그룹 */
 .filter-group {
   display: flex;
@@ -23,13 +21,15 @@
   align-items: flex-start;  /*  왼쪽 정렬 */
   min-width: 140px;         /*  고정 너비 */
 }
-
 .filter-group h4 {
-  font-size: 14px;
-  margin-bottom: 5px;
-  color: #333;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1e293b;
+  padding-bottom: 5px;
+  border-bottom: 2px solid #3b82f6;  /* 👈 이 부분이 파란 줄 */
+  width: 100%;
 }
-
 .filter-group label {
   font-size: 13px;
   margin-bottom: 5px;
@@ -37,7 +37,6 @@
   align-items: center;
   gap: 5px;
 }
-
 /*  검색 버튼 */
 .filter-search-btn {
   background-color: #2ebcff;
@@ -50,15 +49,10 @@
   height: 40px;
   margin-top: auto;
   align-self: flex-start;
-
 }
 .filter-search-btn:hover {
   background-color: #1991cc;
 }
-
-
-
-
 /*  정렬 셀렉트 박스 */
 .product-sorting {
   text-align: right;
@@ -66,55 +60,54 @@
   margin-bottom: 20px;
   width: 100%;
 }
-
-
 .product-sorting select {
   padding: 8px 12px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
-
-
-
-
 /*  상품 리스트 */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 30px;
 }
-
 .product-card {
   border: 1px solid #ddd;
   padding: 15px;
   text-align: center;
   border-radius: 10px;
   transition: box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* 카드 높이를 동일하게 */
 }
-
 .product-card:hover {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
-
 .product-card img {
   width: 100%;
   height: 180px;
   object-fit: cover;
   border-radius: 6px;
 }
-
 .product-name {
   font-weight: bold;
   margin: 10px 0 5px;
 }
-
 .product-price {
   color: #555;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  flex-grow: 1; /* 남은 공간을 채워서 버튼을 아래로 밀어냄 */
 }
-
+/* 버튼 컨테이너 */
+.product-buttons {
+  margin-top: auto; /* 버튼을 카드 하단에 고정 */
+  display: flex;
+  justify-content: center;
+  gap: 8px; /* 버튼 간격을 조금 늘림 */
+  flex-direction: row; /* 가로 배치 명시 */
+}
 /*  버튼 */
 .cart-btn,
 .buy-btn {
@@ -124,35 +117,29 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin: 3px;
 }
-
 /* 반응형 대응 */
 @media (max-width: 768px) {
   .filter-bar {
     flex-direction: column;
     align-items: center;
   }
-
   .product-sorting {
     text-align: center;
   }
 }
-
 .banner-key img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-
 .banner-key {
   position: relative;
   width: 100%;
   height: 400px; 
   overflow: hidden;
 }
-
 .banner-text {
   position: absolute;
   top: 50%;
@@ -165,8 +152,6 @@
   font-weight: bold;
   text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
 }
-
-
 .banner-text h1 {
   font-size: 48px;
   margin: 0 0 10px 0;
