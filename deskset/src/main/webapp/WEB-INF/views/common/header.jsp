@@ -70,7 +70,7 @@ nav a:hover {
     </c:if>
     <c:if test="${not empty sessionScope.loggedInUser}">
       <a href="${pageContext.request.contextPath}/user/logout">Logout</a>
-      <a href="${pageContext.request.contextPath}/cart">Cart</a>
+      <a href="${pageContext.request.contextPath}/mypage/cart">Cart</a>
     </c:if>
     
     <a href="#">Search</a>

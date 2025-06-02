@@ -93,5 +93,11 @@ public class UserController {
 		}
 		return "redirect:/user/login";
 	}
+	@GetMapping("/mypage/cart")
+	public String cart() {
+	    return "mypage/cart"; // /WEB-INF/views/mypage/cart.jsp로 이동
+	}
+
+
 }
 
