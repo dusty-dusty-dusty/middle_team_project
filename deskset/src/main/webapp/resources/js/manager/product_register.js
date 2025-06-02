@@ -3,7 +3,7 @@ $(document).ready(function() {
     let pageLoaded = false;
     let loadingIndicator = $('<div class="loading-spinner text-center py-4"><div class="spinner-border text-primary" role="status"><span class="sr-only">로딩중...</span></div></div>');
     
-    // 초기 페이지 로딩 함수
+/*    // 초기 페이지 로딩 함수
     function initPage() {
         $('#mainContent').hide();
         $('#pageContainer').prepend(loadingIndicator);
@@ -31,7 +31,7 @@ $(document).ready(function() {
     }
     
     // 페이지 초기화 실행
-    initPage();
+    initPage();*/
     
     // 카테고리 변경 시 관련 필드 표시/숨김 처리 (이벤트 위임)
     $(document).on('change', 'input[name="category"]', function() {
@@ -57,10 +57,11 @@ $(document).ready(function() {
             success: function(response) {
                 // 필드 컨테이너 비우기
                 $('#categoryFields').empty();
-                
+				console.log(response);
+				console.log(response.attr_name);
                 // 서버에서 받은 필드 데이터로 HTML 생성
-                if (response.result && response.result.length > 0) {
-                    $.each(response.result, function(index, field) {
+                if (response && response.length > 0) {
+                    $.each(response, function(index, field) {
                         var fieldHtml = generateFieldHtml(field);
                         $('#categoryFields').append(fieldHtml);
                     });
@@ -83,8 +84,8 @@ $(document).ready(function() {
         // 모든 필드 타입을 텍스트 입력 형식으로 변환
         return `
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="${field.id}">${field.label}</label>
-                <input type="text" id="${field.id}" name="${field.name}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="${field.placeholder || ''}">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="${field.attr_id}">${field.attr_name}</label>
+                <input type="text" id="${field.attr_id}" name="${field.attr_name}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="${field.attr_name || ''}">
             </div>`;
     }
     
@@ -94,10 +95,32 @@ $(document).ready(function() {
     }
     
     // 파일 업로드 기능
+    var dropZoneT = $('#dropZoneT');
     var dropZone = $('#dropZone');
+    var dropZoneM = $('#dropZoneM');
+    var fileInputT = $('#fileInputT');
     var fileInput = $('#fileInput');
+    var fileInputM = $('#fileInputM');
     
     // 드래그 앤 드롭 이벤트 (이벤트 위임)
+    $(document).on('dragover', '#dropZoneT', function(e) {
+        e.preventDefault();
+        $(this).addClass('border-blue-500');
+    });
+    
+    $(document).on('dragleave', '#dropZoneT', function(e) {
+        e.preventDefault();
+        $(this).removeClass('border-blue-500');
+    });
+    
+    $(document).on('drop', '#dropZoneT', function(e) {
+        e.preventDefault();
+        $(this).removeClass('border-blue-500');
+        
+        var files = e.originalEvent.dataTransfer.files;
+        handleFilesT(files);
+    });
+
     $(document).on('dragover', '#dropZone', function(e) {
         e.preventDefault();
         $(this).addClass('border-blue-500');
@@ -115,29 +138,108 @@ $(document).ready(function() {
         var files = e.originalEvent.dataTransfer.files;
         handleFiles(files);
     });
+
+    $(document).on('dragover', '#dropZoneM', function(e) {
+        e.preventDefault();
+        $(this).addClass('border-blue-500');
+    });
+    
+    $(document).on('dragleave', '#dropZoneM', function(e) {
+        e.preventDefault();
+        $(this).removeClass('border-blue-500');
+    });
+    
+    $(document).on('drop', '#dropZoneM', function(e) {
+        e.preventDefault();
+        $(this).removeClass('border-blue-500');
+        
+        var files = e.originalEvent.dataTransfer.files;
+        handleFilesM(files);
+    });
     
     // 클릭하여 파일 선택
+    $(document).on('click', '#dropZoneT', function() {
+        $('#fileInputT').click();
+    });
     $(document).on('click', '#dropZone', function() {
         $('#fileInput').click();
     });
+    $(document).on('click', '#dropZoneM', function() {
+        $('#fileInputM').click();
+    });
     
+    $(document).on('change', '#fileInputT', function() {
+        var files = this.files;
+        handleFilesT(files);
+    });
     $(document).on('change', '#fileInput', function() {
         var files = this.files;
         handleFiles(files);
     });
+    $(document).on('change', '#fileInputM', function() {
+        var files = this.files;
+        handleFilesM(files);
+    });
     
+    // 파일 처리 함수T
+    function handleFilesT(files) {
+        // 로딩 인디케이터 표시
+        $('#uploadStatus').html('<div class="my-2 text-blue-500">파일 처리중...</div>');
+        
+     	if (files.length > 1) {
+        	$('#uploadStatus').html('<div class="my-2 text-red-500">이미지는 하나만 업로드 가능합니다.</div>');
+       	 return;
+   		}
+
+	    const file = files[0];
+	    if (validateFile(file)) {
+	        $('#previewContainerT').empty(); // 기존 미리보기 제거 (선택)
+	        previewFileT(file);
+	        uploadFileT(file);
+	    }
+
+
+        // 처리 완료 메시지 표시 후 삭제
+        setTimeout(function() {
+            $('#uploadStatus').empty();
+        }, 2000);
+    }
     // 파일 처리 함수
     function handleFiles(files) {
         // 로딩 인디케이터 표시
         $('#uploadStatus').html('<div class="my-2 text-blue-500">파일 처리중...</div>');
         
-        for (var i = 0; i < files.length; i++) {
+     	if (files.length > 1) {
+        	$('#uploadStatus').html('<div class="my-2 text-red-500">이미지는 하나만 업로드 가능합니다.</div>');
+       	 return;
+   		}
+
+	    const file = files[0];
+	    if (validateFile(file)) {
+	        $('#previewContainer').empty(); // 기존 미리보기 제거 (선택)
+	        previewFile(file);
+	        uploadFile(file);
+	    }
+
+
+        // 처리 완료 메시지 표시 후 삭제
+        setTimeout(function() {
+            $('#uploadStatus').empty();
+        }, 2000);
+    }
+
+    // 파일 처리 함수M
+    function handleFilesM(files) {
+        // 로딩 인디케이터 표시
+        $('#uploadStatus').html('<div class="my-2 text-blue-500">파일 처리중...</div>');
+        
+		for (var i = 0; i < files.length; i++) {
             if (validateFile(files[i])) {
-                previewFile(files[i]);
-                uploadFile(files[i]);
+                previewFileM(files[i]);
+                uploadFileM(files[i]);
             }
         }
-        
+
         // 처리 완료 메시지 표시 후 삭제
         setTimeout(function() {
             $('#uploadStatus').empty();
@@ -153,15 +255,30 @@ $(document).ready(function() {
             return false;
         }
         
-        // 파일 크기 검사 (최대 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            $('#uploadStatus').html('<div class="my-2 text-red-500">파일 크기는 5MB 이하여야 합니다.</div>');
+        // 파일 크기 검사 (최대 20MB)
+        if (file.size > 20 * 1024 * 1024) {
+            $('#uploadStatus').html('<div class="my-2 text-red-500">파일 크기는 20MB 이하여야 합니다.</div>');
             return false;
         }
         
         return true;
     }
     
+    // 파일 미리보기T
+    function previewFileT(file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var preview = `
+                <div class="relative inline-block mr-2 mb-2">
+                    <img src="${e.target.result}" class="w-32 h-32 object-cover rounded" />
+                    <button type="button" class="remove-preview absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">×</button>
+                    <div class="text-xs mt-1 text-center text-gray-500">${file.name}</div>
+                </div>
+            `;
+            $('#previewContainerT').append(preview);
+        };
+        reader.readAsDataURL(file);
+    }
     // 파일 미리보기
     function previewFile(file) {
         var reader = new FileReader();
@@ -177,19 +294,105 @@ $(document).ready(function() {
         };
         reader.readAsDataURL(file);
     }
+    // 파일 미리보기M
+    function previewFileM(file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var preview = `
+                <div class="relative inline-block mr-2 mb-2">
+                    <img src="${e.target.result}" class="w-32 h-32 object-cover rounded" />
+                    <button type="button" class="remove-preview absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">×</button>
+                    <div class="text-xs mt-1 text-center text-gray-500">${file.name}</div>
+                </div>
+            `;
+            $('#previewContainerM').append(preview);
+        };
+        reader.readAsDataURL(file);
+    }
     
     // 미리보기 삭제 (이벤트 위임)
     $(document).on('click', '.remove-preview', function() {
         $(this).parent().remove();
     });
     
+    // 파일 업로드T (AJAX)
+    function uploadFileT(file) {
+        var formData = new FormData();
+        formData.append('file', file);
+        $.ajax({
+            url: '/imguploadT',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener('progress', function(evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total * 100;
+                        // 진행률 표시 (필요시)
+                    }
+                }, false);
+                return xhr;
+            },
+            success: function(response) {
+                console.log('파일 업로드 성공:', response);
+                // 업로드 성공 시 hidden input에 파일 ID 추가 (필요시)
+                if (response.filePath) {
+                    var product_thum = $('#product_thum').val();
+                    product_thum = product_thum ? product_thum + ',' + response.filePath : response.filePath;
+                    $('#product_thum').val(product_thum);
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#uploadStatus').html('<div class="my-2 text-red-500">파일 업로드 실패. 다시 시도해주세요.</div>');
+                console.error('파일 업로드 실패:', error);
+            }
+        });
+    }
     // 파일 업로드 (AJAX)
     function uploadFile(file) {
         var formData = new FormData();
         formData.append('file', file);
-        
         $.ajax({
-            url: '/api/upload',
+            url: '/imgupload',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener('progress', function(evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total * 100;
+                        // 진행률 표시 (필요시)
+                    }
+                }, false);
+                return xhr;
+            },
+            success: function(response) {
+                console.log('파일 업로드 성공:', response);
+                // 업로드 성공 시 hidden input에 파일 ID 추가 (필요시)
+                if (response.fileId) {
+                    var fileIds = $('#fileIds').val();
+                    fileIds = fileIds ? fileIds + ',' + response.fileId : response.fileId;
+                    $('#fileIds').val(fileIds);
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#uploadStatus').html('<div class="my-2 text-red-500">파일 업로드 실패. 다시 시도해주세요.</div>');
+                console.error('파일 업로드 실패:', error);
+            }
+        });
+    }
+    
+    // 파일 업로드M (AJAX)
+    function uploadFileM(file) {
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('imgOrder', imgOrder);
+        $.ajax({
+            url: '/imgupload',
             type: 'POST',
             data: formData,
             processData: false,
@@ -224,8 +427,8 @@ $(document).ready(function() {
     $(document).on('submit', '#productForm', function(e) {
         e.preventDefault();
         
-        // 폼 데이터 수집
-        var formData = $(this).serialize();
+		// 기본 폼 데이터 수집
+    	var formData = new FormData();
         
         // 제출 전 로딩 인디케이터 표시
         $('#submitBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span> 처리중...');
@@ -241,7 +444,16 @@ $(document).ready(function() {
                 
                 // 리디렉션 전 잠시 대기
                 setTimeout(function() {
-                    window.location.href = 'manager/admin_product';
+        		    $.ajax({
+				        url: "admin_product",
+				        method: 'GET',
+				        success: function(data) {
+				            $('#main-content').html(data);
+				        },
+				        error: function() {
+				            alert('컨텐츠를 불러오는 데 실패했습니다.');
+				        }
+				    });
                 }, 1000);
             },
             error: function(xhr, status, error) {
@@ -316,8 +528,6 @@ $(document).ready(function() {
 		            alert('컨텐츠를 불러오는 데 실패했습니다.');
 		        }
 		    });
-
-/*window.location.href = 'admin_product';*/
         }
     });
     

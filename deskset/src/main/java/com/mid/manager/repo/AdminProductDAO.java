@@ -13,5 +13,5 @@ import com.mid.manager.model.RegistProductVO;
 public interface AdminProductDAO {
 	public List<ProductCAJoinVO> getProductListAD();
 	public List<CategoryVO> getCategoryListAD();
-	public ResponseEntity<RegistProductVO> getcategoryATTR(String selectedCategory);
+	public List<RegistProductVO> getcategoryATTR(String selectedCategory);
 }
