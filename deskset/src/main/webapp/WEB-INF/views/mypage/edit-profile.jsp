@@ -396,7 +396,7 @@
                                 confirmButtonText: '확인',
                                 confirmButtonColor: '#00a8e8'
                             }).then(() => {
-                                window.location.href = contextPath + '/mypage/check-profile';
+                                window.location.href = contextPath + '/mypage/profile/check-profile';
                             });
                         } else {
                             Swal.fire({
