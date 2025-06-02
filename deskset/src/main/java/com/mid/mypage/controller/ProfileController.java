@@ -1,94 +1,96 @@
 package com.mid.mypage.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mid.mypage.model.MemberVO;
+import com.mid.mypage.service.MemberService;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
-@RequestMapping({"/mypage/profile", "/deskset/mypage/profile"})
+@RequestMapping("/mypage/profile")
 public class ProfileController {
 
-    @GetMapping("")
-    public String viewProfile(HttpSession session, Model model) {
-        // 세션에서 memId 가져오기 (더미)
-        String memId = (String) session.getAttribute("memId");
-        
-        // 더미 MemberVO 생성
-        MemberVO member = new MemberVO();
-        member.setMemId(memId != null ? memId : "dummyUser");
-        member.setMemName("홍길동");
-        member.setMemEmail("hong@example.com");
-        member.setMemPwd("password123");
-        
-        model.addAttribute("member", member);
-        return "mypage/profile";
-    }
+    @Autowired
+    private MemberService memberService;
 
-    @GetMapping("/edit")
-    public String editProfileForm(HttpSession session, Model model) {
-        // 세션에서 memId 가져오기 (더미)
-        String memId = (String) session.getAttribute("memId");
-        
-        // 더미 MemberVO 생성
-        MemberVO member = new MemberVO();
-        member.setMemId(memId != null ? memId : "dummyUser");
-        member.setMemName("홍길동");
-        member.setMemEmail("hong@example.com");
-        member.setMemPwd("password123");
-        
-        model.addAttribute("member", member);
-        return "mypage/edit-profile";
-    }
-
-    @PostMapping("/edit")
-    public String updateProfile(@ModelAttribute MemberVO member,
-                                HttpSession session,
-                                RedirectAttributes rttr) {
-        // DB 업데이트 로직 제거 → 무조건 성공 메시지
-        rttr.addFlashAttribute("message", "프로필이 성공적으로 수정되었습니다. (더미)");
-        return "redirect:/mypage/profile";
-    }
-
-    @PostMapping("/password")
-    @ResponseBody
-    public String changePassword(@RequestParam String currentPassword,
-                                 @RequestParam String newPassword,
-                                 HttpSession session) {
-        // 더미 기존 비밀번호 (실제로는 세션·서비스에서 가져와야 함)
-        String existingPwd = "password123";
-
-        // 현재 비밀번호 검증
-        if (!existingPwd.equals(currentPassword)) {
-            return "현재 비밀번호가 일치하지 않습니다.";
+    // 개인정보 확인
+    @GetMapping("/check-profile")
+    public String checkProfile(HttpSession session, Model model) {
+        // 세션에서 회원번호로 회원정보 조회
+        if (session.getAttribute("memNo") == null) {
+            session.setAttribute("memNo", "MEM000001");
         }
-
-        // 비밀번호 변경 로직 제거 → 무조건 성공
-        return "success";
-    }
-
-    @GetMapping("edit-profile")
-    public String editProfileForm() {
-        return "mypage/edit-profile";
-    }
-
-    @GetMapping("check-profile")
-    public String checkProfile() {
+        String memNo = (String) session.getAttribute("memNo");
+        System.out.println("==== [DEBUG] check-profile: memNo = " + memNo);
+        MemberVO member = memberService.getMemberByNo(memNo);
+        System.out.println("==== [DEBUG] check-profile: member = " + member);
+        model.addAttribute("memberVO", member);
         return "mypage/check-profile";
     }
 
-    @PostMapping("edit-profile")
+    // 개인정보 수정 폼 진입
+    @GetMapping("/edit-profile")
+    public String editProfileForm(HttpSession session, Model model) {
+        // 세션에서 회원번호로 회원정보 조회
+        if (session.getAttribute("memNo") == null) {
+            session.setAttribute("memNo", "MEM000001");
+        }
+        String memNo = (String) session.getAttribute("memNo");
+        System.out.println("==== [DEBUG] edit-profile: memNo = " + memNo);
+        MemberVO member = memberService.getMemberByNo(memNo);
+        System.out.println("==== [DEBUG] edit-profile: member = " + member);
+        model.addAttribute("memberVO", member);
+        return "mypage/edit-profile";
+    }
+
+    // 개인정보 수정 처리 (Ajax)
+    @PostMapping("/edit-profile")
     @ResponseBody
-    public java.util.Map<String, Object> updateProfile(@ModelAttribute com.mid.mypage.model.MemberVO memberVO) {
-        java.util.Map<String, Object> result = new java.util.HashMap<>();
+    public Map<String, Object> updateProfile(
+        @RequestParam("memNo") String memNo,
+        @RequestParam("memId") String memId,
+        @RequestParam("memName") String memName,
+        @RequestParam("memPwd") String memPwd,
+        @RequestParam("memEmail") String memEmail,
+        @RequestParam("memAddr") String memAddr,
+        @RequestParam("memTel") String memTel,
+        @RequestParam("confirmPassword") String confirmPassword,
+        HttpSession session
+    ) {
+        // 비밀번호/확인 입력 체크 및 회원정보 수정
+        MemberVO memberVO = new MemberVO();
+        memberVO.setMemNo(memNo);
+        memberVO.setMemId(memId);
+        memberVO.setMemName(memName);
+        memberVO.setMemPwd(memPwd);
+        memberVO.setMemEmail(memEmail);
+        memberVO.setMemAddr(memAddr);
+        memberVO.setMemTel(memTel);
+        System.out.println("==== [DEBUG] update-profile: memberVO (RequestParam 방식) = " + memberVO);
+        Map<String, Object> result = new HashMap<>();
+        if (memPwd == null || memPwd.trim().isEmpty() || confirmPassword == null || confirmPassword.trim().isEmpty()) {
+            result.put("success", false);
+            result.put("message", "회원정보를 수정하려면 새 비밀번호와 확인을 모두 입력해야 합니다.");
+            return result;
+        }
+        if (!memPwd.equals(confirmPassword)) {
+            result.put("success", false);
+            result.put("message", "비밀번호가 일치하지 않습니다.");
+            return result;
+        }
         try {
-            // TODO: 실제 DB 업데이트 로직 추가
-            // 예시: memberService.update(memberVO);
-            result.put("success", true);
+            int updateResult = memberService.updateMember(memberVO);
+            System.out.println("==== [DEBUG] update-profile: updateResult = " + updateResult);
+            result.put("success", updateResult > 0);
+            if (updateResult == 0) {
+                result.put("message", "수정할 정보가 없습니다.");
+            }
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "수정 실패: " + e.getMessage());
@@ -96,17 +98,33 @@ public class ProfileController {
         return result;
     }
 
-    @PostMapping("/change-password")
+    // 비밀번호 변경 처리 (Ajax, 더미)
+    @PostMapping("/password")
     @ResponseBody
-    public String changePassword() {
-        // 항상 success
+    public String changePassword(@RequestParam String currentPassword,
+                                 @RequestParam String newPassword,
+                                 HttpSession session) {
+        // 더미 비밀번호 검증 후 성공/실패 반환
+        String existingPwd = "password123";
+        if (!existingPwd.equals(currentPassword)) {
+            return "현재 비밀번호가 일치하지 않습니다.";
+        }
         return "success";
     }
 
+    // 비밀번호 변경 처리 (Ajax, 더미)
+    @PostMapping("/change-password")
+    @ResponseBody
+    public String changePassword() {
+        // 항상 success 반환
+        return "success";
+    }
+
+    // 아이디 중복 체크 (Ajax)
     @PostMapping("/check-id")
     @ResponseBody
     public boolean checkIdDuplicate() {
-        // 항상 사용 가능
+        // 항상 사용 가능 반환
         return false;
     }
 }

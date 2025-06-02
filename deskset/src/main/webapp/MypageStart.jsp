@@ -4,6 +4,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DeskSet - 최고의 사무용품 쇼핑몰</title>
@@ -13,7 +15,7 @@ ct" href="https://fonts.googleapis.com">
 <link
 	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap"
 	rel="stylesheet">
-<link rel="stylesheet"
+<link rel="stylesheet" 
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
 * {

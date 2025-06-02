@@ -6,15 +6,12 @@ import lombok.Data;
 
 @Data
 public class OrderVO {
+    // ORDERS 테이블 정보
     private String orderNo;          // 주문번호
-    private String memNo;            // 회원번호
+    private String orderStatus;      // 주문현황
     private Date orderDate;          // 주문일자
-    private int totalAmount;         // 총 주문금액
-    private String orderStatus;      // 주문상태
-    private String deliveryAddress;  // 배송주소
-    private String paymentMethod;    // 결제방법
     
-    // 조인을 통해 가져오는 추가 필드
+    // PRODUCT 테이블 정보 (JOIN)
     private String productName;      // 상품명
-    private int productPrice;        // 상품가격
+    private int productPrice;        // 상품금액
 } 
