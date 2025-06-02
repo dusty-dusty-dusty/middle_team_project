@@ -2,7 +2,34 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.mid.mypage.mapper.MemberMapper">
+<mapper namespace="com.mid.mypage.repo.MemberDAO">
 
+    <!-- 회원정보 단건 조회 쿼리 (회원번호로) -->
+    <select id="getMemberByNo" parameterType="string" resultType="com.mid.mypage.model.MemberVO">
+        SELECT
+            mem_no AS memNo,
+            mem_id AS memId,
+            mem_name AS memName,
+            mem_email AS memEmail,
+            mem_pwd AS memPwd,
+            mem_addr AS memAddr,
+            mem_tel AS memTel,
+            mem_regdate AS memRegdate,
+            mem_status AS memStatus
+        FROM MEMBER
+        WHERE mem_no = #{memNo}
+    </select>
+
+    <!-- 회원정보 수정 쿼리 (비밀번호 포함) -->
+    <update id="updateMember" parameterType="com.mid.mypage.model.MemberVO">
+        UPDATE MEMBER
+        SET
+            mem_name = #{memName},
+            mem_email = #{memEmail},
+            mem_pwd = #{memPwd},
+            mem_addr = #{memAddr},
+            mem_tel = #{memTel}
+        WHERE mem_no = #{memNo}
+    </update>
 
 </mapper>

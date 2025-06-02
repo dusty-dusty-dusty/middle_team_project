@@ -115,15 +115,18 @@
     <div class="product-grid">
       
         <c:forEach var="product" items="${mouseList}">
-          <div class="product-card">
-        <a href="${pageContext.request.contextPath}/product/sub_product?product_no=${product.product_no}">
-            <img src="${pageContext.request.contextPath}/resources/upload/${product.product_image}" alt="${product.product_name}" />
-            </a>
-            <p class="product-price">${product.product_price}원</p>
-            <button class="cart-btn">장바구니</button>
-            <button class="buy-btn">구매하기</button>
-          </div>
-        </c:forEach>
+  <div class="product-card">
+    <a href="${pageContext.request.contextPath}/product/sub_product?product_no=${product.product_no}">
+      <img src="${pageContext.request.contextPath}/${product.product_thum}" alt="${product.product_name} 상세 이미지" />
+    </a>
+    <p class="product-name">${product.product_name}</p>
+    <p class="product-price">${product.product_price}원</p>
+   		<div class="product-buttons">
+  		<button class="cart-btn">장바구니</button>
+  		<button class="buy-btn">구매하기</button>
+		</div>
+  </div>
+</c:forEach>
       </div>
     </section>
 

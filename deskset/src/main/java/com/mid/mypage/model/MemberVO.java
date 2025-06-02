@@ -13,4 +13,5 @@ public class MemberVO {
     private String memAddr;      // 주소
     private String memTel;       // 전화번호
     private Date memRegdate;     // 가입일자
+    private String memStatus;    // 회원 상태 (정상, 탈퇴 등)
 } 

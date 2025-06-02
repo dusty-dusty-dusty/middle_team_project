@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.mid.manager.model.AttrValueVO;
 import com.mid.manager.model.CategoryVO;
 import com.mid.manager.model.ProductCAJoinVO;
+import com.mid.manager.model.RegistProductDTO;
 import com.mid.manager.model.RegistProductVO;
 import com.mid.manager.repo.AdminProductDAO;
 
@@ -35,9 +37,37 @@ public class AdminProductServiceImpl implements AdminProductService {
 
 
 	@Override
-	public ResponseEntity<RegistProductVO> getcategoryATTR(String category) {
-		ResponseEntity<RegistProductVO> result = adminProductDAO.getcategoryATTR(category);
-		return result;
+	public ResponseEntity<List<RegistProductVO>> getcategoryATTR(String category) {
+		List<RegistProductVO> result = adminProductDAO.getcategoryATTR(category);
+		return ResponseEntity.ok(result);
 	}
+	
+	// AdminProductServiceImpl.java에 추가할 메서드 구현
+	@Override
+	public String getCategoryIdByName(String categoryName) {
+//	    return adminProductDAO.getCategoryIdByName(categoryName);
+	    String result = "asdf";
+	    return result;
+	}
+
+	@Override
+	public String registerProduct(RegistProductDTO productDTO) {
+	    // 상품 번호 생성 (예: PRD + 현재시간 + 랜덤숫자)
+	    String productNo = generateProductNo();
+//	    productDTO.setProduct_no(productNo); // DTO에 product_no 필드 추가 필요
+	    
+//	    adminProductDAO.insertProduct(productDTO);
+	    return productNo;
+	}
+
+	@Override
+	public void insertAttrValue(AttrValueVO attrValueDTO) {
+//	    adminProductDAO.insertAttrValue(attrValueDTO);
+	}
+
+	private String generateProductNo() {
+	    return "PRD" + System.currentTimeMillis() + (int)(Math.random() * 1000);
+	}
+	
 
 }
