@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import java.util.HashMap;
+import com.mid.login.model.UserInfoVO;
 
 /**
  * 장바구니(Cart) 관련 기능을 담당하는 컨트롤러
@@ -34,11 +35,11 @@ public class CartController {
      */
     @GetMapping({"", "/cart"})
     public String cart(@RequestParam(required = false, defaultValue = "1") int page, Model model, HttpSession session) {
-        // 세션에서 회원번호 가져오기
-        if (session.getAttribute("memNo") == null) {
-            session.setAttribute("memNo", "MEM000001");
+        UserInfoVO user = (UserInfoVO) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return "redirect:/user/login";
         }
-        String memNo = (String) session.getAttribute("memNo");
+        String memNo = user.getMemNo();
         logger.info("=== 장바구니 페이지 접속 ===");
         // 페이징 계산
         int pageSize = 20;
@@ -69,10 +70,15 @@ public class CartController {
     public Map<String, Object> addToCart(@RequestParam("productNo") String productNo,
                                          @RequestParam(value = "quantity", defaultValue = "1") int quantity,
                                          HttpSession session) {
-        // 이미 담긴 상품이면 수량만 증가, 없으면 새로 추가
-        String memNo = (String) session.getAttribute("memNo");
-        if (memNo == null) memNo = "MEM000001";
+        UserInfoVO user = (UserInfoVO) session.getAttribute("loggedInUser");
         Map<String, Object> result = new HashMap<>();
+        if (user == null) {
+            result.put("success", false);
+            result.put("message", "로그인이 필요합니다.");
+            return result;
+        }
+        String memNo = user.getMemNo();
+        // 이미 담긴 상품이면 수량만 증가, 없으면 새로 추가
         if (cartService.existsCartItem(memNo, productNo)) {
             cartService.increaseCartQuantity(memNo, productNo, quantity);
             result.put("success", true);
@@ -84,7 +90,7 @@ public class CartController {
         result.put("message", "장바구니에 담겼습니다.");
         return result;
     }
-
+ss
     /**
      * 장바구니 항목 수량 변경(Ajax)
      */
@@ -115,11 +121,11 @@ public class CartController {
      */
     @GetMapping("/list")
     public ResponseEntity<List<CartVO>> getCartList(HttpSession session) {
-        // 회원번호로 장바구니 전체 목록 조회
-        String memNo = (String) session.getAttribute("memNo");
-        if (memNo == null) {
-            memNo = "MEM000001";
+        UserInfoVO user = (UserInfoVO) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return ResponseEntity.status(401).build();
         }
+        String memNo = user.getMemNo();
         List<CartVO> cartList = cartService.getCartList(memNo);
         return ResponseEntity.ok(cartList);
     }
