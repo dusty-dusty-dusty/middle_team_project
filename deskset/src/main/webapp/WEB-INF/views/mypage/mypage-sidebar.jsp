@@ -28,14 +28,14 @@
         <li class="category-header">마이정보</li>
         <!-- 개인정보 확인 메뉴 아이템 - 사용자 정보를 확인할 수 있는 페이지로 연결 -->
         <li>
-            <a href="<c:url value='/mypage/check-profile'/>" 
+            <a href="<c:url value='/mypage/profile/check-profile'/>" 
                class="${fn:endsWith(currentPage, '/check-profile.jsp') ? 'active' : ''}">
                개인정보 확인
             </a>
         </li>
         <!-- 개인정보 수정 메뉴 아이템 - 사용자 정보를 수정할 수 있는 페이지로 연결 -->
         <li>
-            <a href="<c:url value='/mypage/edit-profile'/>" 
+            <a href="<c:url value='/mypage/profile/edit-profile'/>" 
                class="${fn:endsWith(currentPage, '/edit-profile.jsp') ? 'active' : ''}">
                개인정보 수정
             </a>

@@ -182,4 +182,15 @@ public class CartController {
         result.put("totalPrice", totalPrice);
         return result;
     }
+
+    // 장바구니에서 선택상품 주문/삭제 처리
+    @PostMapping("/cartAction.do")
+    public String cartAction(@RequestParam("action") String action,
+                               @RequestParam(value = "selectedItems", required = false) List<String> selectedItems) {
+        // action이 order면 주문, 아니면 장바구니로 리다이렉트
+        if ("order".equals(action) && selectedItems != null && !selectedItems.isEmpty()) {
+            return "redirect:/mypage/order/checkout?cartIds=" + String.join(",", selectedItems);
+        }
+        return "redirect:/mypage/cart";
+    }
 }
