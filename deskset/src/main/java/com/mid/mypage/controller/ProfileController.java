@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mid.mypage.model.MemberVO;
 import com.mid.mypage.service.MemberService;
@@ -20,8 +19,10 @@ public class ProfileController {
     @Autowired
     private MemberService memberService;
 
+    // 개인정보 확인
     @GetMapping("/check-profile")
     public String checkProfile(HttpSession session, Model model) {
+        // 세션에서 회원번호로 회원정보 조회
         if (session.getAttribute("memNo") == null) {
             session.setAttribute("memNo", "MEM000001");
         }
@@ -33,8 +34,10 @@ public class ProfileController {
         return "mypage/check-profile";
     }
 
+    // 개인정보 수정 폼 진입
     @GetMapping("/edit-profile")
     public String editProfileForm(HttpSession session, Model model) {
+        // 세션에서 회원번호로 회원정보 조회
         if (session.getAttribute("memNo") == null) {
             session.setAttribute("memNo", "MEM000001");
         }
@@ -46,6 +49,7 @@ public class ProfileController {
         return "mypage/edit-profile";
     }
 
+    // 개인정보 수정 처리 (Ajax)
     @PostMapping("/edit-profile")
     @ResponseBody
     public Map<String, Object> updateProfile(
@@ -59,6 +63,7 @@ public class ProfileController {
         @RequestParam("confirmPassword") String confirmPassword,
         HttpSession session
     ) {
+        // 비밀번호/확인 입력 체크 및 회원정보 수정
         MemberVO memberVO = new MemberVO();
         memberVO.setMemNo(memNo);
         memberVO.setMemId(memId);
@@ -93,34 +98,33 @@ public class ProfileController {
         return result;
     }
 
+    // 비밀번호 변경 처리 (Ajax, 더미)
     @PostMapping("/password")
     @ResponseBody
     public String changePassword(@RequestParam String currentPassword,
                                  @RequestParam String newPassword,
                                  HttpSession session) {
-        // 더미 기존 비밀번호 (실제로는 세션·서비스에서 가져와야 함)
+        // 더미 비밀번호 검증 후 성공/실패 반환
         String existingPwd = "password123";
-
-        // 현재 비밀번호 검증
         if (!existingPwd.equals(currentPassword)) {
             return "현재 비밀번호가 일치하지 않습니다.";
         }
-
-        // 비밀번호 변경 로직 제거 → 무조건 성공
         return "success";
     }
 
+    // 비밀번호 변경 처리 (Ajax, 더미)
     @PostMapping("/change-password")
     @ResponseBody
     public String changePassword() {
-        // 항상 success
+        // 항상 success 반환
         return "success";
     }
 
+    // 아이디 중복 체크 (Ajax)
     @PostMapping("/check-id")
     @ResponseBody
     public boolean checkIdDuplicate() {
-        // 항상 사용 가능
+        // 항상 사용 가능 반환
         return false;
     }
 }

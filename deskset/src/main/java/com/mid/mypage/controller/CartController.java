@@ -34,38 +34,22 @@ public class CartController {
      */
     @GetMapping({"", "/cart"})
     public String cart(@RequestParam(required = false, defaultValue = "1") int page, Model model, HttpSession session) {
+        // 세션에서 회원번호 가져오기
         if (session.getAttribute("memNo") == null) {
             session.setAttribute("memNo", "MEM000001");
         }
         String memNo = (String) session.getAttribute("memNo");
         logger.info("=== 장바구니 페이지 접속 ===");
-        
-        // 세션에서 회원번호 가져오기
-        logger.info("세션에서 가져온 회원번호: {}", memNo);
-        
+        // 페이징 계산
         int pageSize = 20;
         int startRow = (page - 1) * pageSize + 1;
         int endRow = page * pageSize;
         int totalCount = cartService.getCartCount(memNo);
         int totalPages = (int) Math.ceil((double) totalCount / pageSize);
         logger.info("장바구니 페이징 - page: {}, startRow: {}, endRow: {}, totalCount: {}, totalPages: {}", new Object[]{page, startRow, endRow, totalCount, totalPages});
-        
         // 장바구니 목록 조회
-        logger.info("장바구니 목록 조회 시작 - 회원번호: {}", memNo);
         List<CartVO> cartList = cartService.getCartListPaged(memNo, startRow, endRow);
-        logger.info("장바구니 목록 조회 완료 - 조회된 상품 수: {}", cartList != null ? cartList.size() : 0);
-        
-        if (cartList != null) {
-            for (CartVO cart : cartList) {
-                String logMessage = String.format("장바구니 상품 - ID: %s, 상품명: %s, 가격: %d, 수량: %d",
-                    cart.getCartId(),
-                    cart.getProductName(),
-                    cart.getProductPrice(),
-                    cart.getCartQuantity());
-                logger.info(logMessage);
-            }
-        }
-        
+        // 모델에 데이터 담기
         model.addAttribute("cartList", cartList);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
@@ -85,6 +69,7 @@ public class CartController {
     public Map<String, Object> addToCart(@RequestParam("productNo") String productNo,
                                          @RequestParam(value = "quantity", defaultValue = "1") int quantity,
                                          HttpSession session) {
+        // 이미 담긴 상품이면 수량만 증가, 없으면 새로 추가
         String memNo = (String) session.getAttribute("memNo");
         if (memNo == null) memNo = "MEM000001";
         Map<String, Object> result = new HashMap<>();
@@ -107,6 +92,7 @@ public class CartController {
     @ResponseBody
     public Map<String, Object> updateCartQuantity(@RequestParam("cartId") String cartId,
                                                  @RequestParam("quantity") int quantity) {
+        // 수량 유효성 검사 및 변경
         Map<String, Object> map = new HashMap<>();
         try {
             if (quantity < 1 || quantity > 99) {
@@ -114,13 +100,10 @@ public class CartController {
                 map.put("message", "수량은 1~99개만 가능합니다.");
                 return map;
             }
-            logger.info("[수량변경 요청] cartId: {}, quantity: {}", cartId, quantity);
             int result = cartService.updateCartQuantity(cartId, quantity);
-            logger.info("[수량변경 결과] cartId: {}, quantity: {}, result: {}", new Object[]{cartId, quantity, result});
             map.put("success", result > 0);
             return map;
         } catch (Exception e) {
-            logger.error("수량 변경 중 예외 발생", e);
             map.put("success", false);
             map.put("message", "서버 오류: " + e.getMessage());
             return map;
@@ -132,14 +115,12 @@ public class CartController {
      */
     @GetMapping("/list")
     public ResponseEntity<List<CartVO>> getCartList(HttpSession session) {
+        // 회원번호로 장바구니 전체 목록 조회
         String memNo = (String) session.getAttribute("memNo");
         if (memNo == null) {
-            memNo = "MEM000001"; // Fallback to temporary member number if not logged in
-            logger.info("No session member number found in API call, using temporary member number: {}", memNo);
+            memNo = "MEM000001";
         }
-        
         List<CartVO> cartList = cartService.getCartList(memNo);
-        logger.info("API call - Retrieved cart list for member {}: {} items", memNo, cartList != null ? cartList.size() : 0);
         return ResponseEntity.ok(cartList);
     }
 
@@ -149,6 +130,7 @@ public class CartController {
     @PostMapping("/deleteSelected")
     @ResponseBody
     public String deleteSelectedCartItems(@RequestParam("cartIds") List<String> cartIds) {
+        // 선택된 cartId 리스트 삭제
         int result = cartService.deleteCartByIds(cartIds);
         return result > 0 ? "{\"success\": true}" : "{\"success\": false}";
     }
@@ -159,7 +141,7 @@ public class CartController {
     @DeleteMapping("/delete/{cartId}")
     @ResponseBody
     public String deleteCart() {
-        // 항상 성공 (구현 필요시 수정)
+        // 항상 성공 반환 (구현 필요시 수정)
         return "success";
     }
 
@@ -169,7 +151,7 @@ public class CartController {
     @DeleteMapping("/delete")
     @ResponseBody
     public String deleteCartItem() {
-        // 항상 성공 (구현 필요시 수정)
+        // 항상 성공 반환 (구현 필요시 수정)
         return "success";
     }
 
@@ -179,7 +161,7 @@ public class CartController {
     @PutMapping("/update")
     @ResponseBody
     public String updateCart() {
-        // 항상 성공 (구현 필요시 수정)
+        // 항상 성공 반환 (구현 필요시 수정)
         return "success";
     }
 
@@ -190,6 +172,7 @@ public class CartController {
     @PostMapping("/totalPrice")
     @ResponseBody
     public Map<String, Object> getTotalPrice(@RequestBody Map<String, List<String>> body) {
+        // 선택된 cartId로 총액 계산
         List<String> cartIds = body.get("cartIds");
         int totalPrice = 0;
         if (cartIds != null && !cartIds.isEmpty()) {

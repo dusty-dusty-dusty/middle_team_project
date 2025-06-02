@@ -35,10 +35,11 @@ public class OrderController {
             @RequestParam(value = "cartIds", required = false) List<String> cartIds,
             HttpSession session,
             Model model) {
+        // cartIds 없으면 장바구니로 리다이렉트
         if (cartIds == null || cartIds.isEmpty()) {
             return "redirect:/mypage/cart";
         }
-        // CartVO 떊 鍮 臾몄옄뿴 由ъ뒪듃濡 泥
+        // cartIds, selectedItems 모델에 담아 JSP로 전달
         List<String> selectedItems = new ArrayList<>();
         model.addAttribute("cartIds", cartIds);
         model.addAttribute("selectedItems", selectedItems);
@@ -55,6 +56,7 @@ public class OrderController {
             @RequestParam("paymentMethod") String paymentMethod,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
+        // 임시 주문번호 생성 및 주문 성공 메시지 flash로 전달
         String orderNo = "ORD" + UUID.randomUUID().toString().substring(0, 10);
         redirectAttributes.addFlashAttribute("message",
             "주문이 성공적으로 완료되었습니다. (임시 주문번호: " + orderNo + ")");
@@ -68,6 +70,7 @@ public class OrderController {
     public String orderDetail(
             @PathVariable("orderNo") String orderNo,
             Model model) {
+        // 주문번호로 주문 상세 정보 생성(임시)
         OrderVO order = new OrderVO();
         order.setOrderNo(orderNo);
         order.setOrderDate(new Date());
@@ -82,8 +85,8 @@ public class OrderController {
      */
     @GetMapping("/list")
     public String getOrderList(Model model) {
-        // 임시로 테스트용 memId 사용
-        String testMemId = "MEM000001";  // 테스트 데이터에 있는 회원 ID
+        // 임시 회원번호로 주문목록 조회
+        String testMemId = "MEM000001";
         List<OrderVO> orderList = orderDAO.getOrderListByMemberId(testMemId);
         model.addAttribute("orderList", orderList);
         return "mypage/order/list";
@@ -95,12 +98,12 @@ public class OrderController {
      */
     @GetMapping("/orders")
     public String orders(Model model, HttpSession session) {
+        // 세션에 회원번호 없으면 세팅, 주문목록/데이터 체크 후 모델에 담아 JSP로 전달
         if (session.getAttribute("memNo") == null) {
             session.setAttribute("memNo", "MEM000001");
         }
         String memNo = (String) session.getAttribute("memNo");
         try {
-            // getOrderList 호출 시 회원번호 전달
             Map<String, Object> dataCheck = orderDAO.checkOrderData(memNo);
             List<OrderVO> orderList = orderDAO.getOrderList(memNo);
             model.addAttribute("orderList", orderList);

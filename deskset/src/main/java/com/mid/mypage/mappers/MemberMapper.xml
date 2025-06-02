@@ -4,7 +4,7 @@
          "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mid.mypage.repo.MemberDAO">
 
-    <!-- 회원정보 단건 조회 (회원번호로) -->
+    <!-- 회원정보 단건 조회 쿼리 (회원번호로) -->
     <select id="getMemberByNo" parameterType="string" resultType="com.mid.mypage.model.MemberVO">
         SELECT
             mem_no AS memNo,
@@ -20,7 +20,7 @@
         WHERE mem_no = #{memNo}
     </select>
 
-    <!-- 회원정보 수정 (비밀번호 포함) -->
+    <!-- 회원정보 수정 쿼리 (비밀번호 포함) -->
     <update id="updateMember" parameterType="com.mid.mypage.model.MemberVO">
         UPDATE MEMBER
         SET

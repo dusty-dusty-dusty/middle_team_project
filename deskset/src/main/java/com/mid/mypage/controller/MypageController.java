@@ -27,6 +27,7 @@ public class MypageController {
      */
     @GetMapping({"", "/"})
     public String myPage(HttpSession session) {
+        // 세션에 memId가 없으면 테스트용 ID를 세팅
         if (session.getAttribute("memId") == null) {
             session.setAttribute("memId", TEST_MEMBER_ID);
         }
@@ -38,6 +39,7 @@ public class MypageController {
      */
     @GetMapping("/check-profile")
     public String checkProfile(HttpSession session, Model model) {
+        // 세션에서 회원번호로 회원정보 조회
         if (session.getAttribute("memNo") == null) {
             session.setAttribute("memNo", "MEM000001");
         }
@@ -52,6 +54,7 @@ public class MypageController {
      */
     @GetMapping("/edit-profile")
     public String editProfileForm(HttpSession session, Model model) {
+        // 세션에서 회원번호로 회원정보 조회
         if (session.getAttribute("memNo") == null) {
             session.setAttribute("memNo", "MEM000001");
         }
@@ -69,6 +72,7 @@ public class MypageController {
     public java.util.Map<String, Object> updateProfile(
             @ModelAttribute com.mid.mypage.model.MemberVO memberVO,
             @RequestParam(value = "confirmPassword", required = false) String confirmPassword) {
+        // 비밀번호/확인 입력 체크 및 회원정보 수정
         java.util.Map<String, Object> result = new java.util.HashMap<>();
         try {
             String pwd = memberVO.getMemPwd();
@@ -121,6 +125,7 @@ public class MypageController {
     @PostMapping("/cartAction.do")
     public String cartAction(@RequestParam("action") String action,
                                @RequestParam(value = "selectedItems", required = false) List<String> selectedItems) {
+        // action이 order면 주문, 아니면 장바구니로 리다이렉트
         if ("order".equals(action) && selectedItems != null && !selectedItems.isEmpty()) {
             return "redirect:/mypage/order/checkout?cartIds=" + String.join(",", selectedItems);
         }

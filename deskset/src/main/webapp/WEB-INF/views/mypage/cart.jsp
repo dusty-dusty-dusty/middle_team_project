@@ -418,11 +418,23 @@
                 .then(res => res.json())
                 .then(data => {
                     if (!data.success) {
-                        alert('수량 변경에 실패했습니다.');
+                        Swal.fire({
+                            title: '수량 변경 실패',
+                            text: '수량 변경에 실패했습니다.',
+                            icon: 'error',
+                            confirmButtonText: '확인',
+                            confirmButtonColor: '#00a8e8'
+                        });
                     }
                 })
                 .catch(() => {
-                    alert('서버와 통신 중 오류가 발생했습니다.');
+                    Swal.fire({
+                        title: '오류',
+                        text: '서버와 통신 중 오류가 발생했습니다.',
+                        icon: 'error',
+                        confirmButtonText: '확인',
+                        confirmButtonColor: '#00a8e8'
+                    });
                 });
                 updateTotalPrice();
             });
@@ -470,11 +482,23 @@
                 .then(res => res.json())
                 .then(data => {
                     if (!data.success) {
-                        alert('수량 변경에 실패했습니다.');
+                        Swal.fire({
+                            title: '수량 변경 실패',
+                            text: '수량 변경에 실패했습니다.',
+                            icon: 'error',
+                            confirmButtonText: '확인',
+                            confirmButtonColor: '#00a8e8'
+                        });
                     }
                 })
                 .catch(() => {
-                    alert('서버와 통신 중 오류가 발생했습니다.');
+                    Swal.fire({
+                        title: '오류',
+                        text: '서버와 통신 중 오류가 발생했습니다.',
+                        icon: 'error',
+                        confirmButtonText: '확인',
+                        confirmButtonColor: '#00a8e8'
+                    });
                 });
             });
         });
