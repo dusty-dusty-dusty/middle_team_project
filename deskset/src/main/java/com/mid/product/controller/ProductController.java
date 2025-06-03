@@ -63,6 +63,9 @@ public class ProductController {
     	//상품 정보,리뷰 리스트 가져오기
         ProductVO product = productService.getProductByNo(product_no);
         List<ReviewVO> reviewList = productService.getReviewsByProductNo(product_no);
+        List<String> imgList = productService.getProductImagesByNo(product_no);
+        System.out.println("imgList: " + imgList);
+        
         if (product == null) {
             System.out.println("상품 정보가 없습니다!");
         } else {
@@ -70,6 +73,9 @@ public class ProductController {
         }
         model.addAttribute("product", product);
         model.addAttribute("reviewList",reviewList);
+        model.addAttribute("imgList", imgList);
+        
+        
         
         return "product/sub_product"; // 반드시 뷰 이름 반환!
     }

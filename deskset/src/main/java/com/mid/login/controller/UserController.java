@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 
 @Controller
 @RequestMapping("/user")
@@ -37,7 +38,7 @@ public class UserController {
 	        session.setAttribute("loggedInUser", userInfo);
 	        model.addAttribute("userName", userInfo.getMemName());
 	        model.addAttribute("loginSuccess", "true");
-	        return "login/login_success_start"; // 濡쒓렇�씤 �꽦怨� �떆 諛붾줈 login_success_start.jsp濡� �씠�룞
+	        return "main/main_page"; // 濡쒓렇�씤 �꽦怨� �떆 諛붾줈 login_success_start.jsp濡� �씠�룞
 	    } else {
 	        request.setAttribute("loginError", "아이디 또는 비밀번호가 올바르지 않습니다.");
 	        return "login/login";
@@ -69,7 +70,7 @@ public class UserController {
 
 	@GetMapping("/main")
 	public String main() {
-		return "login/main";
+		return "main/main_page"; // main_page.jsp로 이동
 	}
 
 	@GetMapping("/start")

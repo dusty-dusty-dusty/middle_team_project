@@ -24,9 +24,12 @@ public interface ProductService {
     List<ProductVO> getMouseList(Map<String,Object> filters);
     List<ProductVO> getMonitorList(Map<String,Object> filters);
 
-	
+	//상세 이미지 가져오기
+    List<String> getProductImagesByNo(String product_no);
+    
     //제품리뷰
     List<ReviewVO> getReviewsByProductNo(String product_no);
+    
     
     
     void insertReview(ReviewVO vo);

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class CartVO {
-    private String cartId;          // 장바구니 ID (새로 추가됨)
+    private String cartId;          // 장바구니 ID 
     private String memNo;           // 회원번호 - 사용자 식별
     private String productNo;       // 상품번호 - 상품 식별
     private int cartQuantity;       // 장바구니 수량 - 사용자가 선택한 상품 수량

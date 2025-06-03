@@ -21,12 +21,14 @@ public class BoardController {
 
     // 공지사항 상세보기
     @RequestMapping("/NoticeBoard")  
-    public void getBoard(@RequestParam("notice_no") int noticeNo, Model m) {
+    public String getBoard(@RequestParam("notice_no") String noticeNo, Model m) {
         BoardVO vo = new BoardVO();
-        vo.setNotice_no(noticeNo);
+        vo.setNotice_no(String.valueOf(noticeNo));
         
         BoardVO result = boardService.NoticeBoard(vo);  
         m.addAttribute("board", result);
+        
+        return "notice/NoticeBoard";
     }
 
     //공지사항

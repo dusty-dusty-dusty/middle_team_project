@@ -60,21 +60,24 @@
     </ul>
   </div>
 
-  <!-- 상세 이미지 -->
-  <section class="product-detail" id="detail-section">
-    <div class="detail-image">
-      <img src="${pageContext.request.contextPath}/${product.product_image}" alt="${product.product_name} 상세 이미지" />
-    </div>
-    <div class ="product-description">
-    	<p>${dproduct.product_cont}</p><!-- 설명 텍스트 -->
-    </div>
-  </section>
+  <!-- 상세 이미지 출력 -->
+<section class="product-detail" id="detail-section">
+  <div class="detail-image">
+  <c:forEach var="img" items="${imgList}">
+    <img src="${pageContext.request.contextPath}/${img}" alt="${product.product_name} 상세 이미지" />
+  </c:forEach>
+</div>
+  <div class="product-description">
+    <p>${product.product_cont}</p> <!-- 설명 텍스트 -->
+  </div>
+</section>
 
   <!-- 리뷰 영역 -->
   <section class="product-review" id="review-section">
     <h3>리뷰</h3>
 
-   <form action="${pageContext.request.contextPath}/product/sub_product" method="post">
+   <form action="${pageContext.request.contextPath}/product/sub_product" method="post" class="review-form">
+
  <input type="hidden" name="product_no" value="${product.product_no}">
   <input type="hidden" name="order_detail_no" value="${order_detail_no}">
   
@@ -92,6 +95,10 @@
   <button type="submit">리뷰 등록</button>
 </form>
     
+
+
+
+
 
     <!-- 리뷰 목록 -->
      <ul class="review-list">
