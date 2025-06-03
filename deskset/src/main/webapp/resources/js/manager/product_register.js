@@ -392,7 +392,7 @@ $(document).ready(function() {
         formData.append('file', file);
         formData.append('imgOrder', imgOrder);
         $.ajax({
-            url: '/imgupload',
+            url: '/imguploadM',
             type: 'POST',
             data: formData,
             processData: false,
@@ -429,6 +429,18 @@ $(document).ready(function() {
         
 		// 기본 폼 데이터 수집
     	var formData = new FormData();
+
+	    // 기본 필드들 수집
+	    formData.append('category', $('input[name="category"]:checked').val());
+	    formData.append('productName', $('#productName').val());
+	    formData.append('price', $('#price').val().replace(/,/g, '')); // 콤마 제거
+	    formData.append('quantity', $('#quantity').val());
+	    formData.append('brand', $('#brand').val() || $('#brandInput').val());
+
+	    // 이미지 경로들 수집
+	    formData.append('product_thum', $('#product_thum').val());
+	    formData.append('fileIds', $('#fileIds').val());
+
         
         // 제출 전 로딩 인디케이터 표시
         $('#submitBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span> 처리중...');

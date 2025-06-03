@@ -44,6 +44,79 @@
 
 
 
+	<!-- 카테고리명으로 카테고리 ID 조회 -->
+	<select id="getCategoryIdByName" parameterType="String" resultType="String">
+	    SELECT cate_id 
+	    FROM CATEGORY 
+	    WHERE cate_name = #{categoryName}
+	</select>
+	
+	<!-- 상품 등록 (트리거가 자동으로 PRODUCT_NO 생성) -->
+	<insert id="insertProduct" parameterType="com.mid.manager.model.RegistProductDTO">
+	    INSERT INTO PRODUCT (
+	        cate_id,
+	        admin_no,
+	        product_name,
+	        product_mfc,
+	        product_price,
+	        product_stock,
+	        product_image,
+	        product_thum,
+	        product_cont,
+	        product_regdate
+	    ) VALUES (
+	        #{cate_id},
+	        #{admin_no},
+	        #{product_name},
+	        #{product_mfc},
+	        #{product_price},
+	        #{product_stock},
+	        #{product_image},
+	        #{product_thum},
+	        #{product_cont},
+	        SYSDATE
+	    )
+	</insert>
+	
+	<!-- 최근 등록된 상품 번호 조회 (해당 카테고리의 가장 최근 등록 상품) -->
+	<select id="getLastInsertedProductNo" parameterType="String" resultType="String">
+	    SELECT product_no 
+	    FROM (
+	        SELECT product_no 
+	        FROM PRODUCT 
+	        WHERE cate_id = #{categoryId}
+	        ORDER BY product_regdate DESC, product_no DESC
+	    )
+	    WHERE ROWNUM = 1
+	</select>
+	
+	<!-- 속성값 저장 -->
+	<insert id="insertAttrValue" parameterType="com.mid.manager.model.AttrValueDTO">
+	    INSERT INTO ATTR_VALUE (
+	        product_no,
+	        attr_id,
+	        attr_value
+	    ) VALUES (
+	        #{product_no},
+	        #{attr_id},
+	        #{attr_value}
+	    )
+	</insert>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </mapper>
 <!-- 		SELECT 
 			p.product_no,

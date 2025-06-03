@@ -268,3 +268,11 @@ body {
   color: #444;
   line-height: 1.6;
 }
+
+ul {
+	    margin-block-start: 1em;
+    margin-block-end: 1em;
+    padding-inline-start: 1px;
+    unicode-bidi: isolate;
+	
+}
