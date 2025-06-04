@@ -40,14 +40,12 @@ public class CartController {
             return "redirect:/user/login";
         }
         String memNo = user.getMemNo();
-        logger.info("=== 장바구니 페이지 접속 ===");
         // 페이징 계산
         int pageSize = 20;
         int startRow = (page - 1) * pageSize + 1;
         int endRow = page * pageSize;
         int totalCount = cartService.getCartCount(memNo);
         int totalPages = (int) Math.ceil((double) totalCount / pageSize);
-        logger.info("장바구니 페이징 - page: {}, startRow: {}, endRow: {}, totalCount: {}, totalPages: {}", new Object[]{page, startRow, endRow, totalCount, totalPages});
         // 장바구니 목록 조회
         List<CartVO> cartList = cartService.getCartListPaged(memNo, startRow, endRow);
         // 모델에 데이터 담기

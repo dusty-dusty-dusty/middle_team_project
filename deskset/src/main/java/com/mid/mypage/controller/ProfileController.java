@@ -26,9 +26,7 @@ public class ProfileController {
             return "redirect:/user/login";
         }
         String memNo = user.getMemNo();
-        System.out.println("==== [DEBUG] check-profile: memNo = " + memNo);
         MemberVO member = memberService.getMemberByNo(memNo);
-        System.out.println("==== [DEBUG] check-profile: member = " + member);
         model.addAttribute("memberVO", member);
         return "mypage/check-profile";
     }
@@ -41,9 +39,7 @@ public class ProfileController {
             return "redirect:/user/login";
         }
         String memNo = user.getMemNo();
-        System.out.println("==== [DEBUG] edit-profile: memNo = " + memNo);
         MemberVO member = memberService.getMemberByNo(memNo);
-        System.out.println("==== [DEBUG] edit-profile: member = " + member);
         model.addAttribute("memberVO", member);
         return "mypage/edit-profile";
     }
@@ -71,7 +67,6 @@ public class ProfileController {
         memberVO.setMemEmail(memEmail);
         memberVO.setMemAddr(memAddr);
         memberVO.setMemTel(memTel);
-        System.out.println("==== [DEBUG] update-profile: memberVO (RequestParam 방식) = " + memberVO);
         Map<String, Object> result = new HashMap<>();
         if (memPwd == null || memPwd.trim().isEmpty() || confirmPassword == null || confirmPassword.trim().isEmpty()) {
             result.put("success", false);
@@ -85,7 +80,6 @@ public class ProfileController {
         }
         try {
             int updateResult = memberService.updateMember(memberVO);
-            System.out.println("==== [DEBUG] update-profile: updateResult = " + updateResult);
             result.put("success", updateResult > 0);
             if (updateResult == 0) {
                 result.put("message", "수정할 정보가 없습니다.");
