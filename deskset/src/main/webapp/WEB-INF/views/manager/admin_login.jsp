@@ -101,17 +101,19 @@ button:focus {
       <img src="/deskset/resources/images/manager/logo_admin.png" alt="deskset Icon">
       <!-- Desk<span style="color:#00BFFF;">Set</span> -->
     </div>
-    <form>
+    <form name="adminLoginfrm" id='adminLoginfrm' method="post" action="aadminlogin">
       <div class="input-group">
         <label for="adminId">ID</label>
-        <input type="text" id="admin_id" placeholder="아이디를 입력해 주세요.">
+        <input type="text" id="admin_id" name= "admin_id" placeholder="아이디를 입력해 주세요.">
       </div>
       <div class="input-group">
         <label for="password">Password</label>
-        <input type="password" id="admin_pwd" placeholder="비밀번호를 입력해 주세요.">
+        <input type="password" id="admin_pwd" name= "admin_pwd" placeholder="비밀번호를 입력해 주세요.">
       </div>
 	  <button type="submit">로그인</button>
     </form>
   </div>
 </body>
 </html>
+
+<%-- ${pageContext.request.contextPath}/deskset --%>

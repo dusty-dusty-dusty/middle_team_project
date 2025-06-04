@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mid.common.model.ProductExpImgVO;
 import com.mid.manager.model.AttrValueDTO;
 import com.mid.manager.model.ImgUploadVO;
 import com.mid.manager.model.RegistProductDTO;
@@ -72,11 +74,14 @@ public class AdminProductController {
 	public ResponseEntity<Map<String, Object>> registerProduct(
 	        @RequestParam("category") String category,
 	        @RequestParam("productName") String productName,
+	        @RequestParam("product_cont") String product_cont,
 	        @RequestParam("price") String price,
 	        @RequestParam("quantity") String quantity,
 	        @RequestParam(value = "brand", required = false) String brand,
 	        @RequestParam(value = "product_thum", required = false) String productThum,
-	        @RequestParam(value = "fileIds", required = false) String fileIds,
+	        @RequestParam(value = "product_image", required = false) String productImage,  // 수정: fileIds → product_image
+	        @RequestParam(value = "productExpImages", required = false) String productExpImagesJson, // 수정된 부분
+//	        @RequestParam(value = "img_path", required = false) String imgPath,
 	        @RequestParam(value = "categoryAttributes", required = false) String categoryAttributesJson,
 	        HttpServletRequest request) {
 	    
@@ -86,25 +91,62 @@ public class AdminProductController {
 	        // 기본 상품 정보 설정
 	        RegistProductDTO productDTO = new RegistProductDTO();
 	        
+	        // 세션에서 관리자 번호 가져오기
+	        HttpSession session = request.getSession();
+	        String adminNo = (String) session.getAttribute("admin_no");
+	        
+	        // 세션에 admin_no가 없으면 오류 처리
+	        if (adminNo == null || adminNo.trim().isEmpty()) {
+	            result.put("status", "error");
+	            result.put("message", "로그인이 필요합니다.");
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
+	        }
+	        
+	        
 	        // 카테고리 ID 조회
 	        String categoryId = adminProductService.getCategoryIdByName(category);
 	        productDTO.setCate_id(categoryId);
-	        productDTO.setAdmin_no("1"); // 임시값
+	        productDTO.setAdmin_no(adminNo); // 임시값
 	        
 	        productDTO.setProduct_name(productName);
+	        productDTO.setProduct_cont(product_cont);
 	        productDTO.setProduct_mfc(brand);
 	        productDTO.setProduct_price(Integer.parseInt(price.replace(",", "")));
 	        productDTO.setProduct_stock(Integer.parseInt(quantity));
-	        productDTO.setProduct_thum(productThum);
-	        productDTO.setProduct_image(fileIds);
+	        
+	        // NULL 값 처리 - 빈 문자열을 NULL로 변환
+	        productDTO.setProduct_thum(productThum != null && !productThum.trim().isEmpty() ? productThum : null);
+	        productDTO.setProduct_image(productImage != null && !productImage.trim().isEmpty() ? productImage : null);
+//	        productDTO.setProduct_cont(imgPath != null && !imgPath.trim().isEmpty() ? imgPath : null);
 	        
 	        // 1. 상품 등록
 	        adminProductService.insertProduct(productDTO);
 	        
 	        // 2. 상품 번호 조회
 	        String productNo = adminProductService.getLastInsertedProductNo(categoryId);
+
+	        // 3. 상품 상세 이미지 처리 (새로 추가된 부분)
+	        if (productExpImagesJson != null && !productExpImagesJson.trim().isEmpty()) {
+	            try {
+	                List<Map<String, Object>> expImages = parseProductExpImagesJson(productExpImagesJson);
+	                
+	                for (Map<String, Object> imgInfo : expImages) {
+	                    ProductExpImgVO expImgVO = new ProductExpImgVO();
+	                    expImgVO.setProduct_no(productNo);
+	                    expImgVO.setImg_path((String) imgInfo.get("img_path"));
+	                    expImgVO.setImg_order((Integer) imgInfo.get("img_order"));
+	                    
+	                    adminProductService.insertProductExpImg(expImgVO);
+	                }
+	                
+	            } catch (Exception e) {
+	                System.err.println("상세 이미지 데이터 파싱 오류: " + e.getMessage());
+	                e.printStackTrace();
+	                // 상세 이미지 오류는 전체 프로세스를 중단하지 않도록 처리
+	            }
+	        }	        
 	        
-	        // 3. 동적 속성 처리 (수동 파싱)
+	        // 4. 동적 속성 처리 (수동 파싱)
 	        if (categoryAttributesJson != null && !categoryAttributesJson.trim().isEmpty()) {
 	            try {
 	                // 간단한 JSON 파싱 (배열 형태의 JSON 가정)
@@ -144,6 +186,65 @@ public class AdminProductController {
 	    }
 	}
 
+	// 상품 상세 이미지 JSON 파싱 메서드 (새로 추가)
+	private List<Map<String, Object>> parseProductExpImagesJson(String jsonString) {
+	    List<Map<String, Object>> images = new ArrayList<>();
+	    
+	    try {
+	        // JSON 문자열에서 대괄호 제거
+	        jsonString = jsonString.trim();
+	        if (jsonString.startsWith("[")) {
+	            jsonString = jsonString.substring(1);
+	        }
+	        if (jsonString.endsWith("]")) {
+	            jsonString = jsonString.substring(0, jsonString.length() - 1);
+	        }
+	        
+	        // 객체별로 분리 (},{를 기준으로)
+	        String[] objects = jsonString.split("\\},\\{");
+	        
+	        for (String obj : objects) {
+	            obj = obj.trim();
+	            // 중괄호 정리
+	            if (obj.startsWith("{")) {
+	                obj = obj.substring(1);
+	            }
+	            if (obj.endsWith("}")) {
+	                obj = obj.substring(0, obj.length() - 1);
+	            }
+	            
+	            Map<String, Object> imgMap = new HashMap<>();
+	            
+	            // 속성별로 분리 (,를 기준으로)
+	            String[] pairs = obj.split(",");
+	            for (String pair : pairs) {
+	                String[] keyValue = pair.split(":");
+	                if (keyValue.length == 2) {
+	                    String key = keyValue[0].trim().replace("\"", "");
+	                    String value = keyValue[1].trim().replace("\"", "");
+	                    
+	                    if ("img_order".equals(key)) {
+	                        imgMap.put(key, Integer.parseInt(value));
+	                    } else {
+	                        imgMap.put(key, value);
+	                    }
+	                }
+	            }
+	            
+	            if (!imgMap.isEmpty()) {
+	                images.add(imgMap);
+	            }
+	        }
+	        
+	    } catch (Exception e) {
+	        System.err.println("상세 이미지 JSON 파싱 오류: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	    
+	    return images;
+	}	
+	
+	
 	// 수동 JSON 파싱 메서드
 	private List<Map<String, String>> parseAttributesJson(String jsonString) {
 	    List<Map<String, String>> attributes = new ArrayList<>();
@@ -201,7 +302,7 @@ public class AdminProductController {
 	
 	
 	//상품이미지 등록
-	@PostMapping("/imguploadT")
+	@PostMapping("manager/imguploadT")
     @ResponseBody
     public Map<String, Object> uploadFileT(MultipartFile file, HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
@@ -248,7 +349,7 @@ public class AdminProductController {
         return result;
     }
 	
-	@PostMapping("/imgupload")
+	@PostMapping("manager/imgupload")
 	@ResponseBody
 	public Map<String, Object> uploadFile(MultipartFile file, HttpServletRequest request) {
 		Map<String, Object> result = new HashMap<>();
@@ -295,7 +396,7 @@ public class AdminProductController {
 		return result;
 	}
 	
-	@PostMapping("/imguploadM")
+	@PostMapping("manager/imguploadM")
 	@ResponseBody
 	public Map<String, Object> uploadFileM(MultipartFile file, HttpServletRequest request) {
 		Map<String, Object> result = new HashMap<>();

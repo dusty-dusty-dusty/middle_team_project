@@ -3,8 +3,8 @@ package com.mid.manager.repo;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.http.ResponseEntity;
 
+import com.mid.common.model.ProductExpImgVO;
 import com.mid.manager.model.AttrValueDTO;
 import com.mid.manager.model.CategoryVO;
 import com.mid.manager.model.ProductCAJoinVO;
@@ -21,4 +21,6 @@ public interface AdminProductDAO {
 	public void insertProduct(RegistProductDTO productDTO);
 	public String getLastInsertedProductNo(String categoryId);
 	public void insertAttrValue(AttrValueDTO attrValueDTO);
+	
+	void insertProductExpImg(ProductExpImgVO productExpImgVO);
 }

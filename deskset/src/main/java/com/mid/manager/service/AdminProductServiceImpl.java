@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.mid.common.model.ProductExpImgVO;
 import com.mid.manager.model.AttrValueDTO;
 import com.mid.manager.model.CategoryVO;
 import com.mid.manager.model.ProductCAJoinVO;
@@ -62,7 +63,10 @@ public class AdminProductServiceImpl implements AdminProductService {
 	    adminProductDAO.insertAttrValue(attrValueDTO);
 	}
 
-
+    @Override
+    public void insertProductExpImg(ProductExpImgVO productExpImgVO) {
+        adminProductDAO.insertProductExpImg(productExpImgVO);
+    }
 	
 
 }

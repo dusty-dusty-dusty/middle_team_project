@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import com.mid.common.model.ProductExpImgVO;
 import com.mid.manager.model.AttrValueDTO;
 import com.mid.manager.model.CategoryVO;
 import com.mid.manager.model.ProductCAJoinVO;
@@ -42,7 +43,8 @@ public interface AdminProductService {
      */
     void insertAttrValue(AttrValueDTO attrValueDTO);
 
-    
+    // 상품 상세 이미지 등록
+    void insertProductExpImg(ProductExpImgVO productExpImgVO);
 
     
 
