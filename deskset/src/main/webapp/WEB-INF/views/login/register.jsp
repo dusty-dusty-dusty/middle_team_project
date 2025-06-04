@@ -298,7 +298,7 @@
 
     <div class="container">
         <div class="banner">
-            <img src="${pageContext.request.contextPath}/resources/images/main_banner1.jpg" alt="배너1">
+            <img src="${pageContext.request.contextPath}/resources/images/notice/main_banner1.jpg" alt="배너1">
         </div>
         <div class="register-box">
             <h2>회원가입</h2>
@@ -322,7 +322,7 @@
             </div>
         </div>
         <div class="banner">
-            <img src="${pageContext.request.contextPath}/resources/images/main_banner2.jpg" alt="배너2">
+            <img src="${pageContext.request.contextPath}/resources/images/notice/main_banner2.jpg" alt="배너2">
         </div>
     </div>
 

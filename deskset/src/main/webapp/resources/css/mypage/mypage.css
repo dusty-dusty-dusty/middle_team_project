@@ -7,8 +7,8 @@
 
 /* 기본 페이지 레이아웃 설정 */
 body {
-    margin: 0;                    /* 기본 마진 제거 */
-    padding-top: 60px;           /* 헤더 높이만큼 상단 패딩 */
+    margin: 0;
+    /* padding-top: 60px; */
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;   /* 페이지 배경색 */
 }

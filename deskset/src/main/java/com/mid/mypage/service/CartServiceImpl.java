@@ -90,4 +90,20 @@ public class CartServiceImpl extends CartService {
         if (cartIds == null || cartIds.isEmpty()) return 0;
         return sqlSession.selectOne("com.mid.mypage.mappers.CartMapper.getTotalPriceByCartIds", cartIds);
     }
+
+    @Override
+    public boolean existsCartItem(String memNo, String productNo) {
+        Integer count = sqlSession.selectOne("com.mid.mypage.mappers.CartMapper.existsCartItem", Map.of("memNo", memNo, "productNo", productNo));
+        return count != null && count > 0;
+    }
+
+    @Override
+    public int increaseCartQuantity(String memNo, String productNo, int quantity) {
+        return sqlSession.update("com.mid.mypage.mappers.CartMapper.increaseCartQuantity", Map.of("memNo", memNo, "productNo", productNo, "quantity", quantity));
+    }
+
+    @Override
+    public int addToCart(String memNo, String productNo, int quantity) {
+        return sqlSession.insert("com.mid.mypage.mappers.CartMapper.addToCart", Map.of("memNo", memNo, "productNo", productNo, "quantity", quantity));
+    }
 }
