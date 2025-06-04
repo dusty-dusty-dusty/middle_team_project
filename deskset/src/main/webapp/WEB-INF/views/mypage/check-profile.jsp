@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -165,7 +166,14 @@
                     <div class="form-group">
                         <label for="phone">휴대폰 번호</label>
                         <div class="profile-data">
-                            <input type="tel" id="phone" value="${memberVO.memTel}" readonly class="form-control">
+                            <c:choose>
+                                <c:when test="${fn:length(memberVO.memTel) == 11}">
+                                    <input type="tel" id="phone" value="${fn:substring(memberVO.memTel, 0, 3)}-${fn:substring(memberVO.memTel, 3, 7)}-${fn:substring(memberVO.memTel, 7, 11)}" readonly class="form-control">
+                                </c:when>
+                                <c:otherwise>
+                                    <input type="tel" id="phone" value="${memberVO.memTel}" readonly class="form-control">
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                     
@@ -177,7 +185,7 @@
                     </div>
                     
                     <div class="button-group">
-                        <button type="button" class="save-button" onclick="location.href='<c:url value="/mypage/profile/edit-profile"/>'">
+                        <button type="button" class="save-button" onclick='location.href="<c:url value="/mypage/profile/edit-profile"/>"'>
                             수정하기
                         </button>
                     </div>

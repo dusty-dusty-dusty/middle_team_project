@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.mid.mypage.model.OrderVO;
 import com.mid.mypage.repo.OrderDAO;
+import com.mid.login.model.UserInfoVO;
 
 @Controller
 @RequestMapping("/mypage")
@@ -35,6 +36,10 @@ public class OrderController {
             @RequestParam(value = "cartIds", required = false) List<String> cartIds,
             HttpSession session,
             Model model) {
+        UserInfoVO user = (UserInfoVO) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return "redirect:/user/login";
+        }
         // cartIds 없으면 장바구니로 리다이렉트
         if (cartIds == null || cartIds.isEmpty()) {
             return "redirect:/mypage/cart";
@@ -56,6 +61,10 @@ public class OrderController {
             @RequestParam("paymentMethod") String paymentMethod,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
+        UserInfoVO user = (UserInfoVO) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return "redirect:/user/login";
+        }
         // 임시 주문번호 생성 및 주문 성공 메시지 flash로 전달
         String orderNo = "ORD" + UUID.randomUUID().toString().substring(0, 10);
         redirectAttributes.addFlashAttribute("message",
@@ -98,14 +107,20 @@ public class OrderController {
      */
     @GetMapping("/orders")
     public String orders(Model model, HttpSession session) {
-        // 세션에 회원번호 없으면 세팅, 주문목록/데이터 체크 후 모델에 담아 JSP로 전달
-        if (session.getAttribute("memNo") == null) {
-            session.setAttribute("memNo", "MEM000001");
+        UserInfoVO user = (UserInfoVO) session.getAttribute("loggedInUser");
+        if (user == null) {
+            System.out.println("[OrderController] 세션에 user가 없음");
+            return "redirect:/user/login";
         }
-        String memNo = (String) session.getAttribute("memNo");
+        String memId = user.getMemId();
+        System.out.println("[OrderController] 세션에서 꺼낸 memId: " + memId);
+        if (memId == null) {
+            System.out.println("[OrderController] 세션의 userInfoVO에 memId가 null입니다. 로그인/DB/VO 매핑을 확인하세요.");
+            return "redirect:/user/login";
+        }
         try {
-            Map<String, Object> dataCheck = orderDAO.checkOrderData(memNo);
-            List<OrderVO> orderList = orderDAO.getOrderList(memNo);
+            Map<String, Object> dataCheck = orderDAO.checkOrderData(memId);
+            List<OrderVO> orderList = orderDAO.getOrderList(user.getMemNo());
             model.addAttribute("orderList", orderList);
             return "mypage/orders";
         } catch (Exception e) {

@@ -46,7 +46,7 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             position: absolute;
             left: 50%;
-            top: 50%;
+            top: 60%; /* 중앙(50%)에서 아래로 내림 */
             transform: translate(-50%, -50%);
             z-index: 10;
         }
@@ -139,7 +139,35 @@
         footer {
             margin-top: auto; /* 푸터를 하단에 고정 */
         }
+        .password-requirements {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .icon {
+            margin-right: 5px;
+        }
+        .valid {
+            color: green;
+        }
+        .invalid {
+            color: red;
+        }
+        .password-requirements-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .password-requirements-row .requirement {
+            margin-bottom: 0;
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         window.onload = function() {
             var registerError = "${registerError != null ? registerError : ''}";
@@ -206,17 +234,63 @@
             var memAddr = document.getElementsByName("memAddr")[0].value;
 
             if (!memId || !memPwd || !memPwdCheck || !memName || !memEmail || !memTel || !memAddr) {
-                alert("모든 필수 항목을 입력해주세요.");
+                Swal.fire('입력 오류', '모든 필수 항목을 입력해주세요.', 'warning');
                 return false;
             }
 
             if (document.getElementById("idCheckMsg").style.color !== "rgb(0, 123, 255)") {
-                alert("아이디 중복 확인을 해주세요.");
+                Swal.fire('아이디 중복 확인', '아이디 중복 확인을 해주세요.', 'warning');
                 return false;
             }
 
             return validatePassword();
         }
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.register-box form');
+            const telInput = form.querySelector('input[name="memTel"]');
+            telInput.addEventListener('input', function(e) {
+                let value = this.value.replace(/[^0-9]/g, '').slice(0, 11);
+                let result = '';
+                if (value.length < 4) {
+                    result = value;
+                } else if (value.length < 8) {
+                    result = value.substr(0, 3) + '-' + value.substr(3);
+                } else {
+                    result = value.substr(0, 3) + '-' + value.substr(3, 4) + '-' + value.substr(7, 4);
+                }
+                this.value = result;
+            });
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (!validateForm()) return;
+                const formData = new FormData(form);
+                formData.set('memTel', formData.get('memTel').replace(/-/g, ''));
+                const params = new URLSearchParams();
+                for (const [key, value] of formData.entries()) {
+                    params.append(key, value);
+                }
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: params.toString()
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('회원가입 성공!', '', 'success').then(() => {
+                            location.href = '/deskset/user/login';
+                        });
+                    } else {
+                        Swal.fire('회원가입 실패', data.message, (data.message === '이미 등록된 이메일입니다. 다른 이메일을 입력해 주세요.' || data.message === '이미 등록된 휴대폰 번호입니다. 다른 번호를 입력해 주세요.') ? 'warning' : 'error');
+                    }
+                })
+                .catch(() => {
+                    Swal.fire('회원가입 실패', '알 수 없는 오류가 발생했습니다.', 'error');
+                });
+            });
+        });
     </script>
 </head>
 <body>
@@ -224,7 +298,7 @@
 
     <div class="container">
         <div class="banner">
-            <img src="${pageContext.request.contextPath}/resources/images/main_banner1.jpg" alt="배너1">
+            <img src="${pageContext.request.contextPath}/resources/images/notice/main_banner1.jpg" alt="배너1">
         </div>
         <div class="register-box">
             <h2>회원가입</h2>
@@ -248,7 +322,7 @@
             </div>
         </div>
         <div class="banner">
-            <img src="${pageContext.request.contextPath}/resources/images/main_banner2.jpg" alt="배너2">
+            <img src="${pageContext.request.contextPath}/resources/images/notice/main_banner2.jpg" alt="배너2">
         </div>
     </div>
 

@@ -23,12 +23,14 @@
     display: block;
   }
 
-  nav a {
+  header nav a {
     margin: 0 70px;
     text-decoration: none;
     color: #333;
     font-weight: bold;
     font-size: 20px;
+    display: inline-block;
+    vertical-align: middle;
   }
 
 nav a:hover {
