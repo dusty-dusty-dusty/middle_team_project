@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mid.manager.repo.AdminCategoryDAO">
+
+	
+    <!-- 카테고리 결과 맵 -->
+    <resultMap id="CategoryResultMap" type="com.mid.common.model.CategoryVO">
+        <id property="cate_id" column="cate_id"/>
+        <result property="cate_name" column="cate_name"/>
+        <result property="pn_prefix" column="pn_prefix"/>
+    </resultMap>
+    
+    <!-- 속성 결과 맵 -->
+    <resultMap id="AttrResultMap" type="com.mid.common.model.AttrVO">
+        <id property="attr_id" column="attr_id"/>
+        <result property="cate_id" column="cate_id"/>
+        <result property="attr_name" column="attr_name"/>
+    </resultMap>
+    
+    <!-- PREFIX 코드 중복 확인 -->
+    <select id="countByPrefix" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM CATEGORY
+        WHERE pn_prefix = #{prefixCode}
+    </select>
+    
+    <!-- 카테고리 등록 -->
+    <insert id="insertCategory" parameterType="com.mid.common.model.CategoryVO">
+        INSERT INTO CATEGORY (
+            cate_name,
+            pn_prefix
+        ) VALUES (
+            #{cate_name},
+            #{pn_prefix}
+        )
+    </insert>
+    
+    <!-- 마지막으로 등록된 카테고리 ID 조회 -->
+    <select id="getLastInsertedCateId" resultType="String">
+        SELECT MAX(cate_id) AS cate_id
+        FROM CATEGORY
+    </select>
+    
+    <!-- 속성 등록 -->
+    <insert id="insertAttribute" parameterType="com.mid.common.model.AttrVO">
+        INSERT INTO ATTR (
+            cate_id,
+            attr_name
+        ) VALUES (
+            #{cate_id},
+            #{attr_name}
+        )
+    </insert>
+    
+    <!-- 모든 카테고리 조회 -->
+    <select id="selectAllCategories" resultMap="CategoryResultMap">
+        SELECT 
+            cate_id,
+            cate_name,
+            pn_prefix
+        FROM CATEGORY
+        ORDER BY cate_id
+    </select>
+    
+    <!-- 특정 카테고리의 속성 조회 -->
+    <select id="selectAttributesByCategory" parameterType="String" resultMap="AttrResultMap">
+        SELECT 
+            attr_id,
+            cate_id,
+            attr_name
+        FROM ATTR
+        WHERE cate_id = #{cateId}
+        ORDER BY attr_id
+    </select>
+    
+    <!-- 카테고리 삭제 -->
+    <delete id="deleteCategory" parameterType="String">
+        DELETE FROM CATEGORY
+        WHERE cate_id = #{cateId}
+    </delete>
+    
+    <!-- 카테고리의 모든 속성 삭제 -->
+    <delete id="deleteAttributesByCategory" parameterType="String">
+        DELETE FROM ATTR
+        WHERE cate_id = #{cateId}
+    </delete>
+
+
+</mapper>

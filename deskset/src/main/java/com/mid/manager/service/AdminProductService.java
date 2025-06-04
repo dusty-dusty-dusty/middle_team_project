@@ -16,6 +16,9 @@ public interface AdminProductService {
 	//카테고리 목록 불러오기
 	List<CategoryVO> getCategoryListAD();
 
+	List<ProductCAJoinVO> getProductsByCategories(List<String> categories);
+	
+	
 	//제품 목록 불러오기
 	List<ProductCAJoinVO> getProductListAD();
 

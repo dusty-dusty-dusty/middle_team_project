@@ -22,6 +22,21 @@ public class AdminProductServiceImpl implements AdminProductService {
 	
 	
 	@Override
+	public List<ProductCAJoinVO> getProductsByCategories(List<String> categories) {
+	    try {
+	        List<ProductCAJoinVO> result = adminProductDAO.getProductsByCategories(categories);
+	        System.out.println("서비스에서 필터링된 상품 수: " + (result != null ? result.size() : 0));
+	        return result;
+	    } catch (Exception e) {
+	        System.err.println("카테고리별 상품 조회 중 오류 발생: " + e.getMessage());
+	        e.printStackTrace();
+	        throw e;
+	    }
+	}
+	
+	
+	
+	@Override
 	public List<ProductCAJoinVO> getProductListAD() {
 //		System.out.println("서비스 DB 받은 값 확인 : "+adminProductDAO.getProductListAD());
 		List<ProductCAJoinVO> result = adminProductDAO.getProductListAD();

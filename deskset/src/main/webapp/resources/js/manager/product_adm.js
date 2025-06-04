@@ -244,6 +244,20 @@ function initCategoryForm() {
         $(this).closest(".property-item").remove();
     });
     
+    // PREFIX 코드 중복 검사
+    $(document).on("blur", "input[name='prefixCode']", function() {
+        const prefixCode = $(this).val().trim();
+        if (prefixCode) {
+            checkPrefixDuplicate(prefixCode, $(this));
+        }
+    });
+    
+    // 카테고리 등록 폼 제출
+    $(document).on("submit", "#categoryForm", function(e) {
+        e.preventDefault();
+        submitCategoryForm();
+    });
+
     // 취소 버튼 클릭 시 이전 페이지로 이동
     $(document).on("click", ".category-cancel-btn", function() {
         console.log("취소 버튼 클릭됨");
@@ -260,6 +274,144 @@ function initCategoryForm() {
         });
     });
 }    
+// PREFIX 코드 중복 검사 함수
+function checkPrefixDuplicate(prefixCode, inputElement) {
+    // PREFIX 코드 형식 검증
+    if (!prefixCode.match(/^[A-Z]{1,2}$/)) {
+        showInputError(inputElement, 'PREFIX 코드는 A~Z 대문자 1~2글자로 입력해주세요.');
+        return;
+    }
+    
+    $.ajax({
+        url: '/deskset/manager/check_prefix',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({prefixCode: prefixCode}),
+        success: function(response) {
+            if (response.available) {
+                showInputSuccess(inputElement, response.message);
+            } else {
+                showInputError(inputElement, response.message);
+            }
+        },
+        error: function() {
+            showInputError(inputElement, 'PREFIX 코드 확인 중 오류가 발생했습니다.');
+        }
+    });
+}
+
+// 카테고리 등록 폼 제출 함수
+function submitCategoryForm() {
+    const categoryName = $("input[name='category']").val().trim();
+    const prefixCode = $("input[name='prefixCode']").val().trim();
+    const properties = [];
+    
+    // 속성 수집
+    $("input[name='properties[]']").each(function() {
+        const value = $(this).val().trim();
+        if (value) {
+            properties.push(value);
+        }
+    });
+    
+    // 입력값 검증
+    if (!categoryName) {
+        alert('카테고리명을 입력해주세요.');
+        $("input[name='category']").focus();
+        return;
+    }
+    
+    if (!prefixCode) {
+        alert('PREFIX 코드를 입력해주세요.');
+        $("input[name='prefixCode']").focus();
+        return;
+    }
+    
+    if (!prefixCode.match(/^[A-Z]{1,2}$/)) {
+        alert('PREFIX 코드는 A~Z 대문자 1~2글자로 입력해주세요.');
+        $("input[name='prefixCode']").focus();
+        return;
+    }
+    
+    // 등록 데이터 준비
+    const categoryData = {
+        category: categoryName,
+        prefixCode: prefixCode,
+        properties: properties
+    };
+    
+    // 로딩 상태 표시
+    const submitBtn = $("#categoryForm button[type='submit']");
+    const originalText = submitBtn.text();
+    submitBtn.prop('disabled', true).text('등록 중...');
+    
+    // 카테고리 등록 요청
+    $.ajax({
+        url: '/deskset/manager/category_register',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(categoryData),
+        success: function(response) {
+            if (response.success) {
+                alert(response.message);
+                // 상품 관리 페이지로 이동
+                $.ajax({
+                    url: '/deskset/manager/admin_product',
+                    method: 'GET',
+                    success: function(data) {
+                        $('#main-content').html(data);
+                    },
+                    error: function() {
+                        alert('상품 목록을 불러오는 데 실패했습니다.');
+                    }
+                });
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function(xhr) {
+            let errorMessage = '카테고리 등록에 실패했습니다.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+            alert(errorMessage);
+        },
+        complete: function() {
+            // 로딩 상태 해제
+            submitBtn.prop('disabled', false).text(originalText);
+        }
+    });
+}
+
+// 입력 필드 에러 표시 함수
+function showInputError(inputElement, message) {
+    inputElement.removeClass('border-green-500 focus:ring-green-500')
+                .addClass('border-red-500 focus:ring-red-500');
+    
+    // 기존 메시지 제거
+    inputElement.siblings('.validation-message').remove();
+    
+    // 에러 메시지 추가
+    const errorMsg = `<div class="validation-message text-red-500 text-sm mt-1">${message}</div>`;
+    inputElement.after(errorMsg);
+}
+
+// 입력 필드 성공 표시 함수
+function showInputSuccess(inputElement, message) {
+    inputElement.removeClass('border-red-500 focus:ring-red-500')
+                .addClass('border-green-500 focus:ring-green-500');
+    
+    // 기존 메시지 제거
+    inputElement.siblings('.validation-message').remove();
+    
+    // 성공 메시지 추가
+    const successMsg = `<div class="validation-message text-green-500 text-sm mt-1">${message}</div>`;
+    inputElement.after(successMsg);
+}
+
+
+
+
 
 //-------------------------------상품 등록-------------------------------------------------------
 			//------------등록--------------

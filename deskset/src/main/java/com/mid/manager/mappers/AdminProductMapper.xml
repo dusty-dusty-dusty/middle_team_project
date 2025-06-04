@@ -11,6 +11,35 @@
 		FROM CATEGORY
 	</select>
 	
+		<!-- 선택된 카테고리들의 상품 리스트 조회 -->
+	<select id="getProductsByCategories" parameterType="java.util.List" resultType="com.mid.manager.model.ProductCAJoinVO">
+	    SELECT
+	        p.product_no,
+	        c.cate_name,
+	        a.admin_name,
+	        p.product_name,
+	        p.product_mfc,
+	        p.product_price,
+	        p.product_stock,
+	        p.product_image,
+	        p.product_thum,
+	        p.product_cont
+	    FROM PRODUCT p
+	    LEFT JOIN CATEGORY c ON p.cate_id = c.cate_id
+	    LEFT JOIN ADMIN a ON p.admin_no = a.admin_no
+	    WHERE c.cate_name IN
+	    <foreach collection="list" item="categoryName" open="(" separator="," close=")">
+	        #{categoryName}
+	    </foreach>
+	    ORDER BY p.product_no DESC
+	</select>
+	
+	
+	
+	
+	
+	
+	
 	<!-- 상품등록 페이지 카테고리 별 속성 리스트 불러오기 -->
 	
 	<select id="getcategoryATTR" parameterType="String" resultType="com.mid.manager.model.RegistProductVO">

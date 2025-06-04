@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mid.common.model.ProductExpImgVO;
 import com.mid.manager.model.AttrValueDTO;
 import com.mid.manager.model.ImgUploadVO;
+import com.mid.manager.model.ProductCAJoinVO;
 import com.mid.manager.model.RegistProductDTO;
 import com.mid.manager.model.RegistProductVO;
 import com.mid.manager.service.AdminProductService;
@@ -43,6 +45,44 @@ public class AdminProductController {
 		//상품 목록 로딩
 		model.addAttribute("productList", adminProductService.getProductListAD());
 		model.addAttribute("categoryList", adminProductService.getCategoryListAD());
+	}
+	@GetMapping("manager/admin_product_list")
+	@ResponseBody
+	public ResponseEntity<List<ProductCAJoinVO>> getAllProductList() {
+	    try {
+	        List<ProductCAJoinVO> productList = adminProductService.getProductListAD();
+	        return ResponseEntity.ok(productList);
+	    } catch (Exception e) {
+	        System.err.println("전체 상품 목록 조회 중 오류 발생: " + e.getMessage());
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
+	
+	@PostMapping("manager/admin_product_filter")
+	@ResponseBody
+	public ResponseEntity<List<ProductCAJoinVO>> filterProductsByCategory(
+	        @RequestBody Map<String, List<String>> requestData) {
+	    
+	    try {
+	        List<String> categories = requestData.get("categories");
+	        
+	        if (categories == null || categories.isEmpty()) {
+	            // 카테고리가 선택되지 않은 경우 전체 상품 반환
+	            List<ProductCAJoinVO> allProducts = adminProductService.getProductListAD();
+	            return ResponseEntity.ok(allProducts);
+	        }
+	        
+	        // 선택된 카테고리의 상품들을 필터링
+	        List<ProductCAJoinVO> filteredProducts = adminProductService.getProductsByCategories(categories);
+	        
+	        return ResponseEntity.ok(filteredProducts);
+	        
+	    } catch (Exception e) {
+	        System.err.println("카테고리 필터링 중 오류 발생: " + e.getMessage());
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
 	
 	//관리자 페이지-상품 관리-카테고리 등록

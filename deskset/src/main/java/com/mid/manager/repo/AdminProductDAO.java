@@ -17,6 +17,8 @@ public interface AdminProductDAO {
 	public List<CategoryVO> getCategoryListAD();
 	public List<RegistProductVO> getcategoryATTR(String selectedCategory);
 	
+	List<ProductCAJoinVO> getProductsByCategories(List<String> categories);
+	
 	public String getCategoryIdByName(String categoryName);
 	public void insertProduct(RegistProductDTO productDTO);
 	public String getLastInsertedProductNo(String categoryId);
