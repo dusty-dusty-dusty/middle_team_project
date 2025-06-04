@@ -86,37 +86,8 @@ public class CartServiceImpl extends CartService {
     }
 
     @Override
-    public boolean existsCartItem(String memNo, String productNo) {
-        Integer count = sqlSession.selectOne(
-            "com.mid.mypage.mappers.CartMapper.existsCartItem",
-            Map.of("memNo", memNo, "productNo", productNo)
-        );
-        return count != null && count > 0;
-    }
-
-    @Override
-    public void increaseCartQuantity(String memNo, String productNo, int addQty) {
-        sqlSession.update(
-            "com.mid.mypage.mappers.CartMapper.increaseCartQuantity",
-            Map.of("memNo", memNo, "productNo", productNo, "addQty", addQty)
-        );
-    }
-
-    @Override
-    public void addToCart(String memNo, String productNo, int quantity) {
-        String cartId = java.util.UUID.randomUUID().toString();
-        sqlSession.insert(
-            "com.mid.mypage.mappers.CartMapper.addToCart",
-            Map.of("cartId", cartId, "memNo", memNo, "productNo", productNo, "quantity", quantity)
-        );
-    }
-
-    @Override
     public int getTotalPriceByCartIds(List<String> cartIds) {
-        Integer total = sqlSession.selectOne(
-            "com.mid.mypage.mappers.CartMapper.getTotalPriceByCartIds",
-            cartIds
-        );
-        return total != null ? total : 0;
+        if (cartIds == null || cartIds.isEmpty()) return 0;
+        return sqlSession.selectOne("com.mid.mypage.mappers.CartMapper.getTotalPriceByCartIds", cartIds);
     }
 }

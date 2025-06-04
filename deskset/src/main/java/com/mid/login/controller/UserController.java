@@ -60,6 +60,7 @@ public class UserController {
 			@RequestParam("memPwd") String memPwd,
 			@RequestParam("memAddr") String memAddr,
 			@RequestParam("memTel") String memTel,
+			HttpServletRequest request,
 			Model model) {
 		Map<String, Object> result = new java.util.HashMap<>();
 		UserInfoVO userInfoVO = new UserInfoVO();
@@ -72,6 +73,7 @@ public class UserController {
 		try {
 			int insertResult = userDAO.insertUser(userInfoVO);
 			if (insertResult > 0) {
+				// 자동 로그인 제거: 세션에 로그인 정보 저장하지 않음
 				result.put("success", true);
 			} else {
 				result.put("success", false);
@@ -88,6 +90,9 @@ public class UserController {
 			} else if (errorMsg != null && errorMsg.contains("unique constraint") && errorMsg.contains("EMAIL")) {
 				result.put("success", false);
 				result.put("message", "이 이메일은 이미 사용 중입니다.");
+			} else if (errorMsg != null && (errorMsg.contains("UQ_MEMBER_TEL") || (errorMsg.contains("unique constraint") && errorMsg.toUpperCase().contains("TEL")))) {
+				result.put("success", false);
+				result.put("message", "이미 등록된 휴대폰 번호입니다. 다른 번호를 입력해 주세요.");
 			} else {
 				result.put("success", false);
 				result.put("message", "회원가입 중 오류가 발생했습니다.");

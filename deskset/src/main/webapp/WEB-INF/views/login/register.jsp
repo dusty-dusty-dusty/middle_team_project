@@ -247,22 +247,43 @@
         }
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('.register-box form');
+            const telInput = form.querySelector('input[name="memTel"]');
+            telInput.addEventListener('input', function(e) {
+                let value = this.value.replace(/[^0-9]/g, '').slice(0, 11);
+                let result = '';
+                if (value.length < 4) {
+                    result = value;
+                } else if (value.length < 8) {
+                    result = value.substr(0, 3) + '-' + value.substr(3);
+                } else {
+                    result = value.substr(0, 3) + '-' + value.substr(3, 4) + '-' + value.substr(7, 4);
+                }
+                this.value = result;
+            });
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 if (!validateForm()) return;
                 const formData = new FormData(form);
+                formData.set('memTel', formData.get('memTel').replace(/-/g, ''));
+                const params = new URLSearchParams();
+                for (const [key, value] of formData.entries()) {
+                    params.append(key, value);
+                }
                 fetch(form.action, {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: params.toString()
                 })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
                         Swal.fire('회원가입 성공!', '', 'success').then(() => {
-                            location.href = '/user/login';
+                            location.href = '/deskset/user/login';
                         });
                     } else {
-                        Swal.fire('회원가입 실패', data.message, 'error');
+                        Swal.fire('회원가입 실패', data.message, (data.message === '이미 등록된 이메일입니다. 다른 이메일을 입력해 주세요.' || data.message === '이미 등록된 휴대폰 번호입니다. 다른 번호를 입력해 주세요.') ? 'warning' : 'error');
                     }
                 })
                 .catch(() => {
