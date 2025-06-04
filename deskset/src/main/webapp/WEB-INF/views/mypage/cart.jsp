@@ -339,12 +339,13 @@
                 cb.checked = selected.includes(cb.value);
             });
         }
-        // 체크박스 변경 시 저장
+        // 체크박스 변경 시 저장 + 총액 업데이트
         checkboxes.forEach(cb => {
-            cb.addEventListener('change', saveSelectedCartIds);
+            cb.addEventListener('change', function() {
+                saveSelectedCartIds();
+                updateTotalPrice();
+            });
         });
-        // 페이지 로드 시 복원
-        restoreSelectedCartIds();
         // 전체선택 체크박스 동작 및 저장 (누적/제거 방식)
         selectAll.addEventListener('change', function() {
             let selected = JSON.parse(localStorage.getItem('selectedCartIds') || '[]');
@@ -360,11 +361,6 @@
             });
             localStorage.setItem('selectedCartIds', JSON.stringify(selected));
             updateTotalPrice();
-        });
-
-        // 개별 체크박스 변경 시 총액 업데이트
-        checkboxes.forEach(cb => {
-            cb.addEventListener('change', updateTotalPrice);
         });
 
         // 수량 조절 버튼
@@ -440,66 +436,38 @@
             });
         });
 
-        // 수량 input에 blur 이벤트 추가
+        // 수량 input에 blur, change, keyup(Enter) 이벤트 추가
         document.querySelectorAll('input.quantity-input').forEach(input => {
-            input.addEventListener('blur', function() {
-                let v = parseInt(this.value, 10);
-                if (isNaN(v) || v < 1) {
-                    v = 1;
-                    this.value = v;
-                    Swal.fire({
-                        title: '최소 수량 미만',
-                        text: '최소 수량은 1개입니다.',
-                        icon: 'warning',
-                        confirmButtonText: '확인',
-                        confirmButtonColor: '#00a8e8'
-                    });
-                    return;
-                }
-                if (v > 99) {
-                    v = 99;
-                    this.value = v;
-                    Swal.fire({
-                        title: '최대 수량 초과',
-                        text: '최대 수량은 99개입니다.',
-                        icon: 'warning',
-                        confirmButtonText: '확인',
-                        confirmButtonColor: '#00a8e8'
-                    });
-                    return;
-                }
-                this.value = v;
+            function updateItemAndTotal() {
+                let v = parseInt(input.value, 10);
+                if (isNaN(v) || v < 1) v = 1;
+                if (v > 99) v = 99;
+                input.value = v;
 
-                const basketItem = this.closest('.basket-item');
+                const basketItem = input.closest('.basket-item');
                 const checkbox = basketItem.querySelector('.item-select');
-                const cartId = checkbox.value;
+                const unitPrice = parseInt(checkbox.getAttribute('data-price'), 10);
+                const totalItemPrice = unitPrice * v;
+                basketItem.querySelector('.price').textContent = totalItemPrice.toLocaleString() + '원';
 
                 fetch('<c:url value="/mypage/cart/updateCartQuantity"/>', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: 'cartId=' + encodeURIComponent(cartId) + '&quantity=' + v
+                    body: 'cartId=' + encodeURIComponent(checkbox.value) + '&quantity=' + v
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if (!data.success) {
-                        Swal.fire({
-                            title: '수량 변경 실패',
-                            text: '수량 변경에 실패했습니다.',
-                            icon: 'error',
-                            confirmButtonText: '확인',
-                            confirmButtonColor: '#00a8e8'
-                        });
-                    }
+                    // 에러 처리 생략
+                    updateTotalPrice();
                 })
                 .catch(() => {
-                    Swal.fire({
-                        title: '오류',
-                        text: '서버와 통신 중 오류가 발생했습니다.',
-                        icon: 'error',
-                        confirmButtonText: '확인',
-                        confirmButtonColor: '#00a8e8'
-                    });
+                    // 에러 처리 생략
                 });
+            }
+            input.addEventListener('blur', updateItemAndTotal);
+            input.addEventListener('change', updateItemAndTotal);
+            input.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') updateItemAndTotal();
             });
         });
 
@@ -527,10 +495,6 @@
         }
         // 페이지 로드 시, 체크박스 변경 시, 전체선택 시 총액 갱신
         updateTotalPrice();
-        checkboxes.forEach(cb => {
-            cb.addEventListener('change', updateTotalPrice);
-        });
-        selectAll.addEventListener('change', updateTotalPrice);
 
         // Enter 키로 폼 submit(선택삭제) 방지
         const basketForm = document.querySelector('form[action="basketAction.do"]');
@@ -616,6 +580,9 @@
                 localStorage.removeItem('selectedCartIds');
             });
         }
+
+        // 페이지 로드 시 복원
+        restoreSelectedCartIds();
     });
     </script>
 </body>
