@@ -18,7 +18,7 @@
                     <div class="flex flex-wrap space-x-4">
                         <c:forEach items="${registProductCategory}" var="category">
                             <div class="flex items-center mb-2">
-                                <input type="radio" id="category_${category.cate_name}" name="category" value="${category.cate_name}" class="mr-2" ${category.cate_name eq '키보드' ? 'checked' : ''}>
+                                <input type="radio" id="${category.cate_id}" name="category" value="${category.cate_name}" class="mr-2" ${category.cate_name eq '키보드' ? 'checked' : ''}>
                                 <label for="category_${category.cate_name}" class="text-gray-700">${category.cate_name}</label>
                             </div>
                         </c:forEach>
@@ -32,6 +32,11 @@
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="productName">상품명</label>
                         <input type="text" id="productName" name="productName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="상품명을 입력하세요">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="product_cont">상품설명</label>
+                        <input type="text" id="product_cont" name="product_cont" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="상품설명을 입력하세요">
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4">

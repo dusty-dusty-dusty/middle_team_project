@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mid.manager.repo.AdminLoginDAO">
+
+	<!-- 로그인 확인 -->
+	<select id='loginCheck' parameterType="com.mid.common.model.AdminVO" resultType="com.mid.common.model.AdminVO">
+		SELECT * FROM ADMIN
+		<where>
+			admin_id=#{admin_id} AND admin_pwd=#{admin_pwd}
+		</where>
+	</select>
+
+
+</mapper>

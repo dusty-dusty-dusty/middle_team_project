@@ -227,7 +227,13 @@ $(document).ready(function() {
             $('#uploadStatus').empty();
         }, 2000);
     }
-
+	
+	// 파일 순서 관리를 위한 전역 변수
+	let imgOrder = 0;
+	
+	// 상세 이미지 정보를 저장할 배열
+	let productExpImages = [];
+	
     // 파일 처리 함수M
     function handleFilesM(files) {
         // 로딩 인디케이터 표시
@@ -235,8 +241,10 @@ $(document).ready(function() {
         
 		for (var i = 0; i < files.length; i++) {
             if (validateFile(files[i])) {
-                previewFileM(files[i]);
-                uploadFileM(files[i]);
+	            // 각 파일마다 순서 번호 증가
+            	imgOrder++;
+                previewFileM(files[i], imgOrder);
+                uploadFileM(files[i], imgOrder);
             }
         }
 
@@ -295,7 +303,7 @@ $(document).ready(function() {
         reader.readAsDataURL(file);
     }
     // 파일 미리보기M
-    function previewFileM(file) {
+    function previewFileM(file, order) {
         var reader = new FileReader();
         reader.onload = function(e) {
             var preview = `
@@ -320,7 +328,7 @@ $(document).ready(function() {
         var formData = new FormData();
         formData.append('file', file);
         $.ajax({
-            url: '/imguploadT',
+            url: 'imguploadT',
             type: 'POST',
             data: formData,
             processData: false,
@@ -355,7 +363,7 @@ $(document).ready(function() {
         var formData = new FormData();
         formData.append('file', file);
         $.ajax({
-            url: '/imgupload',
+            url: 'imgupload',
             type: 'POST',
             data: formData,
             processData: false,
@@ -373,10 +381,10 @@ $(document).ready(function() {
             success: function(response) {
                 console.log('파일 업로드 성공:', response);
                 // 업로드 성공 시 hidden input에 파일 ID 추가 (필요시)
-                if (response.fileId) {
-                    var fileIds = $('#fileIds').val();
-                    fileIds = fileIds ? fileIds + ',' + response.fileId : response.fileId;
-                    $('#fileIds').val(fileIds);
+                if (response.filePath) {
+                    var product_image = $('#product_image').val();
+                    product_image = product_image ? product_image + ',' + response.filePath : response.filePath;
+                    $('#product_image').val(product_image);
                 }
             },
             error: function(xhr, status, error) {
@@ -387,12 +395,12 @@ $(document).ready(function() {
     }
     
     // 파일 업로드M (AJAX)
-    function uploadFileM(file) {
+    function uploadFileM(file, order) {
         var formData = new FormData();
         formData.append('file', file);
         formData.append('imgOrder', imgOrder);
         $.ajax({
-            url: '/imgupload',
+            url: 'imguploadM',
             type: 'POST',
             data: formData,
             processData: false,
@@ -409,12 +417,28 @@ $(document).ready(function() {
             },
             success: function(response) {
                 console.log('파일 업로드 성공:', response);
+				console.log('업로드된 파일 순서:', order);	
+	            // 업로드 성공 시 상세 이미지 정보를 배열에 저장
+	            if (response.filePath) {
+	                var imageInfo = {
+	                    img_path: response.filePath,
+	                    img_order: order
+	                };
+	                productExpImages.push(imageInfo);
+	                
+	                // hidden input에 JSON 문자열로 저장
+	                $('#img_path').val(JSON.stringify(productExpImages));
+	                
+	                console.log('현재 상세 이미지 목록:', productExpImages);
+	            }
+/*    
                 // 업로드 성공 시 hidden input에 파일 ID 추가 (필요시)
-                if (response.fileId) {
-                    var fileIds = $('#fileIds').val();
-                    fileIds = fileIds ? fileIds + ',' + response.fileId : response.fileId;
-                    $('#fileIds').val(fileIds);
+	            if (response.filePath) {
+                    var img_path = $('#img_path').val();
+                    img_path = img_path ? img_path + ',' + response.filePath : response.filePath;
+                    $('#img_path').val(img_path);
                 }
+*/
             },
             error: function(xhr, status, error) {
                 $('#uploadStatus').html('<div class="my-2 text-red-500">파일 업로드 실패. 다시 시도해주세요.</div>');
@@ -426,20 +450,75 @@ $(document).ready(function() {
     // 폼 유효성 검사 및 제출 (이벤트 위임)
     $(document).on('submit', '#productForm', function(e) {
         e.preventDefault();
-        
+/*
+	    // 유효성 검사 추가
+	    if (!validateProductForm()) {
+	        return; // 검사 실패시 제출 중단
+	    }        
+
+*/
 		// 기본 폼 데이터 수집
     	var formData = new FormData();
+
+	    // 기본 필드들 수집
+	    formData.append('category', $('input[name="category"]:checked').val());
+	    formData.append('productName', $('#productName').val());
+	    formData.append('product_cont', $('#product_cont').val());
+	    formData.append('price', $('#price').val().replace(/,/g, '')); // 콤마 제거
+	    formData.append('quantity', $('#quantity').val());
+	    formData.append('brand', $('#brand').val() || $('#brandInput').val());
+
+	    // 이미지 경로들 수집
+	    formData.append('product_thum', $('#product_thum').val());
+	    formData.append('product_image', $('#product_image').val());
+	    /*formData.append('img_path', $('#img_path').val());*/
+	    
+		// 상세 이미지 정보를 JSON 문자열로 전송
+	    formData.append('productExpImages', $('#img_path').val());
+
+	    // 동적으로 생성된 카테고리별 속성 필드 수집
+	    var categoryAttributes = [];
+	    $('#categoryFields input[type="text"]').each(function() {
+	        var fieldId = $(this).attr('id');
+	        var fieldName = $(this).attr('name');
+	        var fieldValue = $(this).val();
+	        
+	        if (fieldValue && fieldValue.trim() !== '') {
+	            categoryAttributes.push({
+	                attr_id: fieldId,
+	                attr_name: fieldName,
+	                attr_value: fieldValue
+	            });
+	        }
+	    });
+	    
+	    // 속성 데이터를 JSON 문자열로 변환하여 추가
+	    formData.append('categoryAttributes', JSON.stringify(categoryAttributes));
+	    
+	    console.log('전송할 데이터:', {
+	        category: $('input[name="category"]:checked').val(),
+	        productName: $('#productName').val(),
+	        price: $('#price').val().replace(/,/g, ''),
+	        quantity: $('#quantity').val(),
+	        brand: $('#brand').val() || $('#brandInput').val(),
+	        categoryAttributes: categoryAttributes,
+			productExpImages: productExpImages
+	    });
         
+
         // 제출 전 로딩 인디케이터 표시
         $('#submitBtn').prop('disabled', true).html('<span class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span> 처리중...');
         
         // 서버 전송
         $.ajax({
-            url: '/api/products',
+            url: 'product-register',
             type: 'POST',
             data: formData,
+	        processData: false,
+	        contentType: false,	
             success: function(response) {
-                // 성공 메시지 표시
+                console.log('상품 등록 성공:', response);
+				// 성공 메시지 표시
                 $('#formMessages').html('<div class="alert alert-success">상품이 성공적으로 등록되었습니다.</div>');
                 
                 // 리디렉션 전 잠시 대기
@@ -457,17 +536,56 @@ $(document).ready(function() {
                 }, 1000);
             },
             error: function(xhr, status, error) {
+	            console.error('상품 등록 실패:', error);
+          		console.error('응답:', xhr.responseText);
                 // 오류 메시지 표시
                 $('#formMessages').html('<div class="alert alert-danger">상품 등록에 실패했습니다. 다시 시도해주세요.</div>');
                 
                 // 제출 버튼 복원
                 $('#submitBtn').prop('disabled', false).html('등록하기');
-                
-                console.error('상품 등록 실패:', error);
             }
         });
     });
-    
+/*
+	// 폼 유효성 검사 함수 추가
+	function validateProductForm() {
+	    var isValid = true;
+	    var errors = [];
+	    
+	    // 필수 필드 검사
+	    if (!$('input[name="category"]:checked').val()) {
+	        errors.push('카테고리를 선택해주세요.');
+	        isValid = false;
+	    }
+	    
+	    if (!$('#productName').val().trim()) {
+	        errors.push('상품명을 입력해주세요.');
+	        isValid = false;
+	    }
+	    
+	    if (!$('#price').val().trim()) {
+	        errors.push('가격을 입력해주세요.');
+	        isValid = false;
+	    }
+	    
+	    if (!$('#quantity').val().trim()) {
+	        errors.push('수량을 입력해주세요.');
+	        isValid = false;
+	    }
+	    
+	    // 에러 메시지 표시
+	    if (!isValid) {
+	        var errorHtml = '<div class="alert alert-danger"><ul>';
+	        errors.forEach(function(error) {
+	            errorHtml += '<li>' + error + '</li>';
+	        });
+	        errorHtml += '</ul></div>';
+	        $('#formMessages').html(errorHtml);
+	    }
+	    
+	    return isValid;
+		}
+ */   
     // 폼 유효성 검사 추가 설정
     if ($.validator) {
         $('#productForm').validate({
