@@ -16,6 +16,10 @@ public class AdminController {
 	@RequestMapping("manager/admin")
 	public void adminPage() {
 	}
+	//관리자 페이지
+	@RequestMapping("manager/admin_dashboard")
+	public void adminDashBoard() {
+	}
 //-------------------------------------------------------
 	//관리자 페이지-관리자 관리
 	@RequestMapping("manager/admin_admin")

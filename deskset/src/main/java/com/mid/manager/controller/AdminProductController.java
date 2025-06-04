@@ -310,7 +310,7 @@ public class AdminProductController {
         if (file != null && !file.isEmpty()) {
             try {
                 // 서버에 저장할 경로 설정
-                String uploadPath = request.getServletContext().getRealPath("/resources/images/thumb/");
+                String uploadPath = request.getServletContext().getRealPath("resources/images/thumb/");
                 
                 // 폴더 없으면 생성
                 File folder = new File(uploadPath);
@@ -357,7 +357,7 @@ public class AdminProductController {
 		if (file != null && !file.isEmpty()) {
 			try {
 				// 서버에 저장할 경로 설정
-				String uploadPath = request.getServletContext().getRealPath("/resources/images/product/");
+				String uploadPath = request.getServletContext().getRealPath("resources/images/product/");
 				
 				// 폴더 없으면 생성
 				File folder = new File(uploadPath);
@@ -378,7 +378,7 @@ public class AdminProductController {
 				ImgUploadVO imgUploadVO = new ImgUploadVO();
 				imgUploadVO.setOriginalName(originalName);
 				imgUploadVO.setSavedName(savedName);
-				imgUploadVO.setUploadPath("/resources/images/product/" + savedName);
+				imgUploadVO.setUploadPath("resources/images/product/" + savedName);
 				
 				// 성공 응답
 				result.put("result", "success");
@@ -404,7 +404,7 @@ public class AdminProductController {
 		if (file != null && !file.isEmpty()) {
 			try {
 				// 서버에 저장할 경로 설정
-				String uploadPath = request.getServletContext().getRealPath("/resources/images/product_exp/");
+				String uploadPath = request.getServletContext().getRealPath("resources/images/product_exp/");
 				
 				// 폴더 없으면 생성
 				File folder = new File(uploadPath);
@@ -425,7 +425,7 @@ public class AdminProductController {
 				ImgUploadVO imgUploadVO = new ImgUploadVO();
 				imgUploadVO.setOriginalName(originalName);
 				imgUploadVO.setSavedName(savedName);
-				imgUploadVO.setUploadPath("/resources/images/product_exp/" + savedName);
+				imgUploadVO.setUploadPath("resources/images/product_exp/" + savedName);
 				
 				// 성공 응답
 				result.put("result", "success");

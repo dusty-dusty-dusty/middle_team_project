@@ -7,7 +7,7 @@
 					class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white mr-3">
 					<i class="ri-admin-fill ri-lg"></i>
 				</div>
-				<h1 class="text-xl font-['Pacifico'] text-gray-800">logo</h1>
+				<h1 class="text-xl font-['Pacifico'] text-gray-800">${sessionScope.admin_name}</h1>
 			</div>
 			<nav class="py-4">
 				<ul>

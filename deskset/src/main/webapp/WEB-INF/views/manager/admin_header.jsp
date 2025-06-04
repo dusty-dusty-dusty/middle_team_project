@@ -8,8 +8,8 @@
             <a href ='#' class = 'logo' ><img src='../resources/images/common/logo.png'/></a>
             <nav>
                 <ul class="flex items-center gap-6">
-                    <li><!-- <a href="#" class="text-gray-600 hover:text-primary"> --><a href="#" >관리</a></li>
-                    <li><!-- <a href="#" class="text-primary font-medium"> --><a href="#">대시보드</a></li>
+                    <li><!-- <a href="#" class="text-gray-600 hover:text-primary"> --><a href="admin" >관리</a></li>
+                    <li><!-- <a href="#" class="text-primary font-medium"> --><a href="admin_dashboard">대시보드</a></li>
                     <li><!-- <a href="#" class="text-gray-600 hover:text-primary"> --><a href="#">사용자 페이지</a></li>
                 </ul>
             </nav>
