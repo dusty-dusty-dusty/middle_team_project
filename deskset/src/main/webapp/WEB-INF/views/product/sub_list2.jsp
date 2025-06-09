@@ -134,5 +134,93 @@
 
 <jsp:include page="../common/footer.jsp" />
 
+
+<script>
+    
+   
+    const memNo = '${sessionScope.memNo != null ? sessionScope.memNo : ""}';
+    console.log("페이지 로드 시 memNo 값:", memNo); 
+
+    document.querySelectorAll('.cart-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            // 현재 JavaScript 변수 memNo의 값을 기준으로 로그인 여부 판단
+            if (!memNo || memNo.trim() === '' || memNo === 'null') {
+                alert("회원만 가능한 서비스입니다. 로그인 페이지로 이동합니다.");
+                window.location.href = '${pageContext.request.contextPath}/user/login';
+            } else {
+               
+                const productCard = this.closest('.product-card'); // 버튼의 가장 가까운 .product-card 조상 요소를 찾음
+                let productId = null;
+
+                if (productCard) {
+                    const productLink = productCard.querySelector('a[href*="product_no="]'); // .product-card 내부에서 product_no 링크를 찾음
+                    if (productLink && productLink.href) {
+                        const urlParams = new URLSearchParams(productLink.search); // 링크의 쿼리 파라미터 분석
+                        productId = urlParams.get('product_no');
+                        // 또는 이전처럼 split 사용: productId = productLink.href.split('product_no=')[1].split('&')[0];
+                    }
+                }
+                
+              
+
+                if (!productId) {
+                    alert("상품 정보를 찾을 수 없습니다. HTML 구조나 productId 추출 로직을 확인해주세요.");
+                    console.error("클릭된 버튼:", this);
+                    if(productCard) console.error("찾은 productCard:", productCard); else console.error(".product-card를 찾지 못했습니다.");
+                    return;
+                }
+                
+                console.log("장바구니 추가 시도 - productId:", productId); // ★★★ productId 값 확인용 로그
+                
+                // 실제 장바구니에 상품 담기
+                addToCart(productId);
+            }
+        });
+    });
+    
+    // 장바구니에 상품을 담는 함수
+    function addToCart(productId) {
+        // AJAX로 서버에 장바구니 담기 요청
+        fetch('${pageContext.request.contextPath}/mypage/cart/add', { // 서버 CartController의 매핑 경로
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', // CartController가 @RequestParam을 사용하므로
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({ // URLSearchParams 사용
+                'productNo': productId,
+                'quantity': 1 // 목록 페이지에서는 보통 1개로 고정
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                // 서버에서 에러 응답(4xx, 5xx)을 보낸 경우
+                return response.json().then(err => { throw err; }) // 서버가 JSON 에러 메시지를 보냈다고 가정
+                                 .catch(() => { throw new Error(`서버 응답 오류 (${response.status})`);}); // JSON 파싱 실패 또는 다른 에러
+            }
+            return response.json(); // 성공 응답은 JSON으로 기대
+        })
+        .then(data => {
+            console.log("서버 응답 데이터:", data);
+            if (data.success) {
+                // 성공적으로 장바구니에 담긴 경우
+                if (confirm(data.message || "장바구니에 담겼습니다. 장바구니 페이지로 이동하시겠습니까?")) {
+                    window.location.href = '${pageContext.request.contextPath}/mypage/cart'; // 장바구니 페이지 이동 URL
+                }
+                // 아니오를 선택하면 현재 페이지 유지
+            } else {
+                alert(data.message || "장바구니 담기에 실패했습니다.");
+            }
+        })
+        .catch(error => {
+            console.error('장바구니 추가 최종 오류:', error);
+            let errorMessage = "오류가 발생했습니다. 다시 시도해주세요.";
+            if (error && error.message) {
+                errorMessage = error.message; // 서버에서 보낸 메시지 또는 JavaScript Error 메시지
+            }
+            alert(errorMessage);
+        });
+    }
+</script>
 </body>
 </html>
